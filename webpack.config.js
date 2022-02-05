@@ -7,6 +7,7 @@ const plugins = [
   {name: "packedBubbleField", version: "v1"},
   {name: "sankeyDiagramField", version: "v1"},
   {name: "areaChartField", version: "v1"},
+  {name: "timelineChartField", version: "v1"},
 ];
 
 let copyPatterns = [

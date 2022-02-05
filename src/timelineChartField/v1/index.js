@@ -1,5 +1,5 @@
 var Highcharts = require('highcharts');
-import { escape } from 'lodash'
+require('highcharts/modules/timeline')(Highcharts);
 
 import {
   getColorScheme,
@@ -20,20 +20,11 @@ Appian.Component.onNewValue(function (newValues) {
   let validations = [];
 
   var showTooltips = newValues.showTooltips == null ? false : newValues.showTooltips;
-  var showDataLabels = newValues.showDataLabels == null ? false : newValues.showDataLabels;
 
   var xAxisTitle = newValues.xAxisTitle;
-  var yAxisTitle = newValues.yAxisTitle;
-  var yAxisMin = newValues.yAxisMin;
-  var yAxisMax = newValues.yAxisMax;
   var xAxisStyle = newValues.xAxisStyle;
-  var yAxisStyle = newValues.yAxisStyle;
-
-  var threshold = newValues.threshold;
 
   var tooltipData = '{point.y}';
-
-  var allowDecimalAxisLabels = newValues.allowDecimalAxisLabels;
 
   var data = newValues.series;
   var colorScheme = newValues.colorScheme;
@@ -57,27 +48,10 @@ Appian.Component.onNewValue(function (newValues) {
 
   chart = Highcharts.chart('container', {
     chart: {
-        type: 'area'
+      zoomType: 'x',
+      type: 'timeline'
     },
     colors: colors,
-    plotOptions: {
-      area: {
-        dataLabels: {
-          enabled: showDataLabels,
-        },
-        threshold: threshold ? threshold : 0,
-        marker: {
-          enabled: false,
-          symbol: 'circle',
-          radius: 2,
-          states: {
-            hover: {
-                enabled: true
-            }
-          }
-        }
-      }
-    },
     xAxis: {
       visible: xAxisStyle !== 'NONE',
       title: {
@@ -88,37 +62,26 @@ Appian.Component.onNewValue(function (newValues) {
         style: {
           fontSize: __FONT_SIZE
         }
-      },
-      allowDecimals: allowDecimalAxisLabels
+      }
     },
     yAxis: {
-      visible: yAxisStyle !== 'NONE',
-      maxPadding: yAxisStyle === 'MINIMAL' ? 0 : undefined,
-      tickPositioner:
-        yAxisStyle === 'MINIMAL' || yAxisStyle === 'NONE' ?
-        function () {
-          const defaultTicks = this.tickPositions;
-          const formattedMin = allowDecimalAxisLabels
-            ? yAxisMin
-            : Math.floor(yAxisMin);
-          const min = formattedMin || defaultTicks[0];
-          const formattedMax = allowDecimalAxisLabels
-            ? yAxisMax
-            : Math.ceil(yAxisMax);
-          const max =
-            formattedMax || defaultTicks[defaultTicks.length - 1];
-          return [min, max];
-        }
-      : undefined,
-      title: {
-        text: escape(yAxisTitle),
-        style: {
-          fontWeight: __TEXT_WEIGHT_SEMI_BOLD
-        }
-      },
-      allowDecimals: allowDecimalAxisLabels
+      gridLineWidth: 1,
+      title: null,
+      labels: {
+        enabled: false
+      }
     },
-    series: data,
+    series: [{
+      dataLabels: {
+        allowOverlap: false,
+        format: '<span style="color:{point.color}">● </span><span style="font-weight: bold;" > ' +
+          '{point.x:%d %b %Y}</span><br/>{point.label}'
+      },
+      marker: {
+        symbol: 'circle'
+      },
+      data: data
+    }],
     tooltip: {
       pointFormat:
         `<span style="color:${__TEXT_COLOR_DARK};">{series.name}: </span>` +
@@ -130,7 +93,10 @@ Appian.Component.onNewValue(function (newValues) {
       borderColor: '#eee',
       backgroundColor: 'rgba(255,255,255,0.92)',
       enabled: showTooltips,
-      outside: true
+      outside: true,
+      style: {
+        width: 300
+      }
     },
     title: {
       text: undefined
