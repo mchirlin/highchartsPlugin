@@ -1,12 +1,14 @@
 var Highcharts = require('highcharts');
-require('highcharts/modules/sankey')(Highcharts);
 import { escape } from 'lodash'
 
 import {
   getColorScheme,
    __COLORS,
    __COLORS_VAL,
-   __TEXT_WEIGHT_SEMI_BOLD
+   __TEXT_COLOR_DARK,
+   __TEXT_COLOR_LIGHT,
+   __TEXT_WEIGHT_SEMI_BOLD,
+   __FONT_SIZE
  } from '../../chartUtils'
 
 let chart;
@@ -19,13 +21,12 @@ Appian.Component.onNewValue(function (newValues) {
 
   var showTooltips = newValues.showTooltips == null ? false : newValues.showTooltips;
 
-  var xAxisStyle = newValues.xAxisStyle;
   var xAxisTitle = newValues.xAxisTitle;
-
-  var yAxisStyle = newValues.yAxisStyle;
   var yAxisTitle = newValues.yAxisTitle;
   var yAxisMin = newValues.yAxisMin;
   var yAxisMax = newValues.yAxisMax;
+  var xAxisStyle = newValues.xAxisStyle;
+  var yAxisStyle = newValues.yAxisStyle;
 
   var tooltipData = '{point.y}';
 
@@ -33,7 +34,7 @@ Appian.Component.onNewValue(function (newValues) {
 
   var data = newValues.series;
   var colorScheme = newValues.colorScheme;
-  var colors = getColorScheme({colorScheme: colorScheme, series: data, type: 'wordCloud'});
+  var colors = getColorScheme({colorScheme: colorScheme, series: data, type: 'areaChart'});
 
   if (!colors) {
     validations.push(__COLORS_VAL);
@@ -52,6 +53,9 @@ Appian.Component.onNewValue(function (newValues) {
   Appian.Component.setValidations(validations);
 
   chart = Highcharts.chart('container', {
+    chart: {
+        type: 'area'
+    },
     colors: colors,
     plotOptions: {
       area: {

@@ -20,7 +20,7 @@ Appian.Component.onNewValue(function (newValues) {
   var showDataLabels = newValues.showDataLabels == null ? false : newValues.showDataLabels;
   var data = newValues.series;
   var colorScheme = newValues.colorScheme;
-  var colors = getColorScheme({colorScheme: colorScheme, series: data, type: 'wordCloud'});
+  var colors = getColorScheme({colorScheme: colorScheme, series: data, type: 'packedBubble'});
 
   if (!colors) {
     validations.push(__COLORS_VAL);

@@ -18,7 +18,7 @@ Appian.Component.onNewValue(function (newValues) {
   var showTooltips = newValues.showTooltips == null ? false : newValues.showTooltips;
   var data = newValues.series;
   var colorScheme = newValues.colorScheme;
-  var colors = getColorScheme({colorScheme: colorScheme, series: data, type: 'wordCloud'});
+  var colors = getColorScheme({colorScheme: colorScheme, series: data, type: 'sankeyDiagram'});
 
   if (!colors) {
     validations.push(__COLORS_VAL);
