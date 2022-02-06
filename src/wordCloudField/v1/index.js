@@ -41,7 +41,7 @@ Appian.Component.onNewValue(function (newValues) {
     colors: colors,
     series: [{
       type: 'wordcloud',
-      data,
+      data: data,
       name: 'Occurrences'
     }],
     plotOptions: showLinks ? {

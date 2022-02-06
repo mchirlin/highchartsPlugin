@@ -24,10 +24,10 @@ Appian.Component.onNewValue(function (newValues) {
 
   var xAxisTitle = newValues.xAxisTitle;
   var yAxisTitle = newValues.yAxisTitle;
-  var yAxisMin = newValues.yAxisMin;
-  var yAxisMax = newValues.yAxisMax;
   var xAxisStyle = newValues.xAxisStyle;
   var yAxisStyle = newValues.yAxisStyle;
+  var yAxisMin = newValues.yAxisMin;
+  var yAxisMax = newValues.yAxisMax;
 
   var threshold = newValues.threshold;
 
@@ -82,7 +82,9 @@ Appian.Component.onNewValue(function (newValues) {
       visible: xAxisStyle !== 'NONE',
       title: {
         text: escape(xAxisTitle),
-        fontWeight: __TEXT_WEIGHT_SEMI_BOLD
+        style: {
+          fontWeight: __TEXT_WEIGHT_SEMI_BOLD
+        }
       },
       labels: {
         style: {

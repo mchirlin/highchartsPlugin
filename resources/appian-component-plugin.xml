@@ -72,6 +72,16 @@
       <type>Dictionary?list</type>
     </parameter>
     <parameter>
+      <name>minSize</name>
+      <category>input-only</category>
+      <type>Variant</type>
+    </parameter>
+    <parameter>
+      <name>maxSize</name>
+      <category>input-only</category>
+      <type>Variant</type>
+    </parameter>
+    <parameter>
       <name>showTooltips</name>
       <category>input-only</category>
       <type>Boolean</type>

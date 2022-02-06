@@ -22,6 +22,9 @@ Appian.Component.onNewValue(function (newValues) {
   var colorScheme = newValues.colorScheme;
   var colors = getColorScheme({colorScheme: colorScheme, series: data, type: 'packedBubble'});
 
+  var minSize = newValues.minSize;
+  var maxSize = newValues.minSize;
+
   if (!colors) {
     validations.push(__COLORS_VAL);
   }
@@ -46,15 +49,10 @@ Appian.Component.onNewValue(function (newValues) {
     series: data,
     plotOptions: {
       packedbubble: {
-        minSize: '8%',
-        maxSize: '100%',
+        minSize: minSize,
+        maxSize: maxSize,
         dataLabels: {
           enabled: showDataLabels,
-          // filter: {
-          //   property: 'y',
-          //   operator: '>',
-          //   value: 25
-          // },
           style: {
             color: 'black',
             textOutline: 'none',
