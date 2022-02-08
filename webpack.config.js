@@ -27,6 +27,14 @@ plugins.forEach(element => {
 module.exports = {
   mode: 'development',
   entry: entries,
+  module: {
+    rules: [
+      {
+        test: /\.css$/i,
+        use: ["style-loader", "css-loader"]
+      }
+    ]
+  },
   output: {
     path: path.resolve(__dirname, 'dist/lib'),
     clean: true,

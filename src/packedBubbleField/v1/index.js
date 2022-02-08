@@ -16,14 +16,16 @@ Appian.Component.onNewValue(function (newValues) {
 
   let validations = [];
 
+  var showLegend = newValues.showLegend == null ? false : newValues.showLegend;
   var showTooltips = newValues.showTooltips == null ? false : newValues.showTooltips;
   var showDataLabels = newValues.showDataLabels == null ? false : newValues.showDataLabels;
+
   var data = newValues.series;
   var colorScheme = newValues.colorScheme;
   var colors = getColorScheme({colorScheme: colorScheme, series: data, type: 'packedBubble'});
 
-  var minSize = newValues.minSize;
-  var maxSize = newValues.minSize;
+  // var minSize = newValues.minSize;
+  // var maxSize = newValues.minSize;
 
   if (!colors) {
     validations.push(__COLORS_VAL);
@@ -49,8 +51,8 @@ Appian.Component.onNewValue(function (newValues) {
     series: data,
     plotOptions: {
       packedbubble: {
-        minSize: minSize,
-        maxSize: maxSize,
+        // minSize: minSize,
+        // maxSize: maxSize,
         dataLabels: {
           enabled: showDataLabels,
           style: {
@@ -61,6 +63,9 @@ Appian.Component.onNewValue(function (newValues) {
           format: '{point.name}'
         }
       }
+    },
+    legend: {
+      enabled: showLegend
     },
     tooltip: {
       enabled: showTooltips,

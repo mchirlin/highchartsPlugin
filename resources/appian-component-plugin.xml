@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<appian-component-plugin name="Highchart Component" key="com.apppiancs.plugins.highcharts">
+<appian-component-plugin name="Highchart Component" key="com.appiancs.plugins.highcharts">
   <plugin-info>
     <description>Highcharts</description>
     <vendor name="Appian CS" url="https://appian.com"/>
@@ -46,6 +46,11 @@
       <type>Dictionary?list</type>
     </parameter>
     <parameter>
+      <name>showLegend</name>
+      <category>input-only</category>
+      <type>Boolean</type>
+    </parameter>
+    <parameter>
       <name>showTooltips</name>
       <category>input-only</category>
       <type>Boolean</type>
@@ -72,16 +77,6 @@
       <type>Dictionary?list</type>
     </parameter>
     <parameter>
-      <name>minSize</name>
-      <category>input-only</category>
-      <type>Variant</type>
-    </parameter>
-    <parameter>
-      <name>maxSize</name>
-      <category>input-only</category>
-      <type>Variant</type>
-    </parameter>
-    <parameter>
       <name>showTooltips</name>
       <category>input-only</category>
       <type>Boolean</type>
@@ -97,6 +92,11 @@
     <sdk-version>2.0.0</sdk-version>
     <supported-user-agents>chrome edge safari mobile</supported-user-agents>
     <icon-file>image.svg</icon-file>
+    <parameter>
+      <name>categories</name>
+      <category>input-only</category>
+      <type>Text?list</type>
+    </parameter>
     <parameter>
       <name>series</name>
       <category>input-only</category>
@@ -126,6 +126,11 @@
       <name>yAxisMax</name>
       <category>input-only</category>
       <type>Decimal</type>
+    </parameter>
+    <parameter>
+      <name>showLegend</name>
+      <category>input-only</category>
+      <type>Boolean</type>
     </parameter>
     <parameter>
       <name>showTooltips</name>

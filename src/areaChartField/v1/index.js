@@ -3,6 +3,8 @@ import { escape } from 'lodash'
 
 import {
   getColorScheme,
+  getXAxisType,
+  processSeries,
    __COLORS,
    __COLORS_VAL,
    __TEXT_COLOR_DARK,
@@ -10,6 +12,8 @@ import {
    __TEXT_WEIGHT_SEMI_BOLD,
    __FONT_SIZE
  } from '../../chartUtils'
+
+ import css from "../../highcharts.css";
 
 let chart;
 
@@ -19,8 +23,12 @@ Appian.Component.onNewValue(function (newValues) {
 
   let validations = [];
 
+  var showLegend = newValues.showLegend == null ? false : newValues.showLegend;
   var showTooltips = newValues.showTooltips == null ? false : newValues.showTooltips;
   var showDataLabels = newValues.showDataLabels == null ? false : newValues.showDataLabels;
+
+  var categories = newValues.categories;
+  var data = newValues.series;
 
   var xAxisTitle = newValues.xAxisTitle;
   var yAxisTitle = newValues.yAxisTitle;
@@ -28,14 +36,13 @@ Appian.Component.onNewValue(function (newValues) {
   var yAxisStyle = newValues.yAxisStyle;
   var yAxisMin = newValues.yAxisMin;
   var yAxisMax = newValues.yAxisMax;
+  var xAxisType = getXAxisType(data, categories);
 
   var threshold = newValues.threshold;
 
   var tooltipData = '{point.y}';
-
   var allowDecimalAxisLabels = newValues.allowDecimalAxisLabels;
 
-  var data = newValues.series;
   var colorScheme = newValues.colorScheme;
   var colors = getColorScheme({colorScheme: colorScheme, series: data, type: 'areaChart'});
 
@@ -57,7 +64,8 @@ Appian.Component.onNewValue(function (newValues) {
 
   chart = Highcharts.chart('container', {
     chart: {
-        type: 'area'
+        type: 'area',
+        styledMode: true
     },
     colors: colors,
     plotOptions: {
@@ -78,6 +86,9 @@ Appian.Component.onNewValue(function (newValues) {
         }
       }
     },
+    legend: {
+      enabled: showLegend
+    },
     xAxis: {
       visible: xAxisStyle !== 'NONE',
       title: {
@@ -91,7 +102,9 @@ Appian.Component.onNewValue(function (newValues) {
           fontSize: __FONT_SIZE
         }
       },
-      allowDecimals: allowDecimalAxisLabels
+      allowDecimals: allowDecimalAxisLabels,
+      categories: categories,
+      type: xAxisType
     },
     yAxis: {
       visible: yAxisStyle !== 'NONE',
@@ -120,7 +133,7 @@ Appian.Component.onNewValue(function (newValues) {
       },
       allowDecimals: allowDecimalAxisLabels
     },
-    series: data,
+    series: processSeries(data),
     tooltip: {
       pointFormat:
         `<span style="color:${__TEXT_COLOR_DARK};">{series.name}: </span>` +

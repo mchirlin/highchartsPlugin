@@ -70,3 +70,41 @@ export function getColorScheme(model) {
   }
   return colorValues;
 }
+
+// This function will get the type of X axis
+export function getXAxisType(series, categories) {
+  let datapoint = series[0].data[0][getDataIndex(series, 'x')];
+
+  if (isDatetimeValue(datapoint)) {
+    return 'datetime'
+  } else if (categories) {
+    return 'categories';
+  } else {
+    return 'linear';
+  }
+}
+
+// This function will convert dates and datetimes in the X series to timestamps
+export function processSeries(series) {
+  let dataIndex = getDataIndex(series, 'x');
+
+  if (getAxisType(series, null) === 'datetime') {
+    series.forEach((e, i) => {
+      e.data.forEach((f, j) => {
+        series[i].data[j][dataIndex] = Date.parse(series[i].data[j][dataIndex]);
+      });
+    });
+  }
+
+  return series;
+}
+
+// This function will determine if value is a datetime value
+function isDatetimeValue(datapoint) {
+  return !isNaN(Date.parse(datapoint)); //  TODO - add regex matching here
+}
+
+// This function will return X if the series is in the format of {x: 1, y: 2} or 0 if the series is in the format of [1,2]
+function getDataIndex(series, axis) {
+  return series[0].data[0][axis] ? axis : 0;
+}
