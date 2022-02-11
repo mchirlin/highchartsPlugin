@@ -1,3 +1,18 @@
+import { merge, zip, zipWith, isFunction, escape } from 'lodash';
+
+import { Model } from './model';
+
+export const ChartTypes = {
+  BarChart: 'BarChart',
+  PieChart: 'PieChart',
+  ColumnChart: 'ColumnChart',
+  AreaChart: 'AreaChart',
+  SankeyDiagram: 'SankeyDiagram',
+  PackedBubble: 'PackedBubble',
+  TimelineChart: 'TimelineChart',
+  WordCloud: 'WordCloud',
+};
+
 export const __COLORS_VAL = 'Invalid value for "colorScheme". "colorScheme" must be null, a list of colors, or one of the following values: "CLASSIC" (default), "MIDNIGHT", "OCEAN", "MOSS", "BERRY", "PARACHUTE", "RAINFOREST", or "SUNSET".';
 
 export const __COLORS = {
@@ -38,15 +53,319 @@ export const CHART_PATTERN_FILLS = [
   'M 0 0 L 5 10 L 10 0'
 ];
 
-export const __TEXT_WEIGHT_SEMI_BOLD = 600;
-export const __FONT_SIZE = 11;
+export const TEXT_WEIGHT_SEMI_BOLD = 600;
+export const FONT_SIZE = 11;
 
-export const __TEXT_COLOR_DARK = '#222';
-export const __TEXT_COLOR_LIGHT = '#eee';
+export const TEXT_COLOR_DARK = '#222';
+export const TEXT_COLOR_LIGHT = '#eee';
+
+const CHARACTER_PX = 10;
+const NULL_CATEGORY_LABEL_LENGTH = 9;
+export const MAX_ANGLED_LABEL_LENGTH = 20;
+export const MAX_HORIZ_LABEL_LENGTH = 35;
+export const MICRO_MAX_HORIZ_LABEL_LENGTH = 20;
+const MIN_BAR_WIDTH = 10;
+const HIGHCHARTS_USABLE_COLUMN_RATIO = 0.6;
+
+export function getModel(newValues, type) {
+  let containerHeight = newValues.height;
+
+  let model = Model(type);
+  model.showLegend = newValues.showLegend;
+  model.showTooltips = newValues.showTooltips;
+  model.showDataLabels = newValues.showDataLabels;
+  model.showLinks = newValues.showLinks;
+  model.series = newValues.series;
+  model.threshold = newValues.threshold;
+  model.colorScheme = newValues.colorScheme;
+  model.colorScheme = newValues.colorScheme;
+  model.xAxisTitle = newValues.xAxisTitle;
+  model.yAxisTitle = newValues.yAxisTitle;
+  model.xAxisStyle = newValues.xAxisStyle;
+  model.yAxisStyle = newValues.yAxisStyle;
+  model.xAxisType = newValues.xAxisType;
+  model.xAxisFormat = newValues.xAxisFormat;
+  model.splitSeries = newValues.splitSeries;
+  model.allowDecimalAxisLabels = newValues.allowDecimalAxisLabels;
+  model.colors = getColorScheme(model);
+  model.validations = getValidations(model);
+
+  if (model.validations.length > 0) {
+    containerHeight = '0px';
+  }
+
+  if (containerHeight === 'auto') {
+    document.getElementById('container').style.height = '400px';
+  } else if (containerHeight !== 'auto') {
+    document.getElementById('container').style.height = parseInt(containerHeight) - 16 + "px";
+  }
+
+  return model;
+}
+
+export function getValidations(model) {
+  if (!model.colors) {
+    validations.push(__COLORS_VAL);
+  }
+
+  return validations;
+}
+
+export function getChartOptions(
+  model,
+  ...chartSpecficiOptions
+) {
+  const accentColor = "#1d659c";
+  const isBarChart = model.type === ChartTypes.BarChart;
+  const isPieChart = model.type === ChartTypes.PieChart;
+  const isColumnChart = model.type === ChartTypes.ColumnChart;
+  const isAreaChart = model.type === ChartTypes.AreaChart;
+  // const isAccentDark = !!accentColor && isHexColorDark(accentColor);
+  // const inDarkAccentBackground = context.inAccentBackground && isAccentDark;
+  // const inDarkBackground = inDarkAccentBackground || context.inDarkBackground;
+  const inDarkBackground = false;
+  // const isPercentToTotal = model.get('stacking') === 'PERCENT_TO_TOTAL';
+  const tooltipData = '{point.y}';
+  // const tooltipData = isPercentToTotal
+  //  ? '{point.percentage:.1f}%'
+  //  : '{point.y}';
+  const usePatternFill = false;
+  // const usePatternFill = chartPatternFill && (isBarChart || isColumnChart || isAreaChart); // pie chart not included for data labels and tooltips
+  const useLargerLegendItems = false;
+  // const useLargerLegendItems =
+  //  chartPatternFill &&
+  //  (isBarChart || isColumnChart || isPieChart || isAreaChart); */
+  // const tooltipColor = usePatternFill ? TEXT_COLOR_DARK : '{series.color}';
+  // chartContext = context;
+
+  return merge(
+    {
+      title: {
+        text: ''
+      },
+      colors: model.colors,
+      xAxis: {
+        visible: model.xAxisStyle !== 'NONE',
+        title: {
+          text: escape(model.xAxisTitle),
+          style: {
+            color: inDarkBackground ? TEXT_COLOR_LIGHT : TEXT_COLOR_DARK,
+            fontWeight: TEXT_WEIGHT_SEMI_BOLD
+          }
+        },
+        allowDecimals: model.allowDecimalAxisLabels,
+        gridLineColor: inDarkBackground
+          ? 'rgba(136, 136, 136, 0.5)'
+          : 'rgba(200, 200, 200, 0.5)', // when this rgba value changes, update its counterpart in charts.less and variables.less
+        lineColor: inDarkBackground
+          ? 'rgba(136, 136, 136, 1)'
+          : 'rgba(200, 200, 200, 1)', // when this rgba value changes, update its counterpart in charts.less and variables.less
+        labels: {
+          // Setting the 'step' makes every nth label visible on the axis, so this will cause every label to be shown.
+          // Bar charts with AUTO height should expand to be able to show every label. Other charts/heights rely on Highcharts default behavior
+          step:
+            model.type == isBarChart &&
+            (!model.height || model.height === 'AUTO')
+              ? 1
+              : 0,
+          style: {
+            fontSize: FONT_SIZE,
+            color: inDarkBackground ? TEXT_COLOR_LIGHT : TEXT_COLOR_DARK
+          }
+        }
+      },
+      // yAxis: {
+      //   visible: model.get('yAxisStyle') !== 'NONE',
+      //   maxPadding: model.get('yAxisStyle') === 'MINIMAL' ? 0 : undefined,
+      //   tickPositioner:
+      //     model.get('yAxisStyle') === 'MINIMAL' ||
+      //     model.get('yAxisStyle') === 'NONE'
+      //       ? function () {
+      //           const defaultTicks = this.tickPositions;
+      //           const formattedMin = model.get('allowDecimalAxisLabels')
+      //             ? model.get('yAxisMin')
+      //             : Math.floor(model.get('yAxisMin'));
+      //           const min = formattedMin || defaultTicks[0];
+      //           const formattedMax = model.get('allowDecimalAxisLabels')
+      //             ? model.get('yAxisMax')
+      //             : Math.ceil(model.get('yAxisMax'));
+      //           const max =
+      //             formattedMax || defaultTicks[defaultTicks.length - 1];
+      //           return [min, max];
+      //         }
+      //       : undefined,
+      //   title: {
+      //     text: escape(model.get('yAxisTitle')),
+      //     style: {
+      //       color: inDarkBackground ? TEXT_COLOR_LIGHT : TEXT_COLOR_DARK,
+      //       fontWeight: TEXT_WEIGHT_SEMI_BOLD
+      //     }
+      //   },
+      //   allowDecimals: model.get('allowDecimalAxisLabels'),
+      //   gridLineColor: inDarkBackground
+      //     ? 'rgba(136, 136, 136, 0.5)'
+      //     : 'rgba(200, 200, 200, 0.5)',
+      //   lineColor: inDarkBackground
+      //     ? 'rgba(136, 136, 136, 1)'
+      //     : 'rgba(200, 200, 200, 1)',
+      //   labels: {
+      //     // 100% label gets slightly cut off on a STANDARD percent bar chart
+      //     x:
+      //       isBarChart &&
+      //       isPercentToTotal &&
+      //       model.get('yAxisStyle') !== 'MINIMAL'
+      //         ? -1
+      //         : 0,
+      //     format: isPercentToTotal ? '{value}%' : '{value}',
+      //     style: {
+      //       fontSize: FONT_SIZE,
+      //       color: inDarkBackground ? TEXT_COLOR_LIGHT : TEXT_COLOR_DARK
+      //     }
+      //   },
+      //   plotLines: createReferenceLines(
+      //     model.get('referenceLines'),
+      //     accentColor,
+      //     colorScheme,
+      //     inDarkBackground
+      //   )
+      // },
+      // tooltip: {
+      //   pointFormat:
+      //     `<span style="color:${tooltipColor};">{series.name}: </span>` +
+      //     `<span style="font-weight: ${TEXT_WEIGHT_SEMI_BOLD}">${tooltipData}</span><br/>`,
+      //   shared: true,
+      //   useHTML: true,
+      //   borderRadius: 0,
+      //   shadow: false,
+      //   borderColor: '#eee',
+      //   backgroundColor: 'rgba(255,255,255,0.92)',
+      //   enabled: getIfNotNull(model, 'showTooltips', true),
+      //   outside: true
+      // },
+      legend: {
+        // rtl: isRTLLanguage,
+        itemHoverStyle: {
+          color: inDarkBackground ? '#fff' : '#000'
+        },
+        itemHiddenStyle: {
+          color: inDarkBackground ? '#aaa' : '#ccc'
+        },
+        itemStyle: {
+          fontWeight: 'normal',
+          fontSize: useLargerLegendItems ? 13 : FONT_SIZE,
+          color: inDarkBackground ? TEXT_COLOR_LIGHT : TEXT_COLOR_DARK
+        },
+        enabled: model.showLegend,
+        padding: model.height === 'MICRO' || isPieChart ? 2 : 5, // default is 8
+        symbolHeight: IS_REACT_NATIVE || useLargerLegendItems ? 13 : 10 // defaults to font size, needed to prevent legend circle from being cut off
+      },
+      plotOptions: {
+        // bar: {
+        //   borderWidth: 1,
+        //   dataLabels: {
+        //     formatter: getBarColDataLabelFormatter(
+        //       inDarkBackground,
+        //       usePatternFill
+        //     ),
+        //     enabled: model.get('showDataLabels'),
+        //     style: {
+        //       textOutline: usePatternFill ? '1px contrast' : 'none',
+        //       cursor: 'default'
+        //     }
+        //   },
+        //   stacking: getStackingConfig(model.get('stacking')),
+        //   groupPadding:
+        //     model.get('height') === 'MICRO' || model.get('height') === 'SHORT'
+        //       ? 0.1
+        //       : 0.2 // default is 0.2
+        // },
+        // column: {
+        //   borderWidth: 1,
+        //   dataLabels: {
+        //     formatter: getBarColDataLabelFormatter(
+        //       inDarkBackground,
+        //       usePatternFill
+        //     ),
+        //     enabled: model.get('showDataLabels'),
+        //     style: {
+        //       textOutline: usePatternFill ? '1px contrast' : 'none',
+        //       cursor: 'default'
+        //     }
+        //   },
+        //   stacking: getStackingConfig(model.get('stacking'))
+        // },
+        // pie: {
+        //   borderWidth: 1,
+        //   innerSize: model.get('style') === 'DONUT' ? '50%' : undefined,
+        //   // This stops the cursor from changing to text select when hovering on a label
+        //   cursor: 'default',
+        //   showInLegend: true,
+        //   dataLabels: {
+        //     enabled:
+        //       model.get('seriesLabelStyle') !== 'LEGEND' &&
+        //       shouldShowPieLabels(model).showAnyLabels,
+        //     style: {
+        //       color: inDarkBackground ? TEXT_COLOR_LIGHT : TEXT_COLOR_DARK,
+        //       fontWeight: 'normal',
+        //       fontSize: '0.8571rem',
+        //       // This width was just picked. It might be good to check exact current behaviour.
+        //       width: '100px',
+        //       textShadow: 'none',
+        //       textOutline: 'none'
+        //     }
+        //   }
+        // },
+        // line: {
+        //   // Highcharts does not show series with links longer than the turboThreshold.
+        //   // Setting it to 0 disables this and will always show the series.
+        //   // See https://api.highcharts.com/highcharts/plotOptions.series.turboThreshold
+        //   turboThreshold: 0,
+        //   dataLabels: {
+        //     enabled: model.get('showDataLabels'),
+        //     style: {
+        //       textShadow: 'none',
+        //       cursor: 'default',
+        //       color: inDarkBackground ? TEXT_COLOR_LIGHT : TEXT_COLOR_DARK,
+        //       textOutline: 'none'
+        //     }
+        //   }
+        // },
+        // area: {
+        //   // Highcharts does not show series with links longer than the turboThreshold.
+        //   // Setting it to 0 disables this and will always show the series.
+        //   // See https://api.highcharts.com/highcharts/plotOptions.series.turboThreshold
+        //   turboThreshold: 0,
+        //   dataLabels: {
+        //     enabled: model.get('showDataLabels'),
+        //     style: {
+        //       textShadow: 'none',
+        //       cursor: 'default',
+        //       color: inDarkBackground ? TEXT_COLOR_LIGHT : TEXT_COLOR_DARK,
+        //       textOutline: 'none'
+        //     }
+        //   },
+        //   stacking: getStackingConfig(model.get('stacking'))
+        // }
+      },
+      series: processSeries(model),
+      credits: {
+        enabled: false
+      },
+      chart: {
+        spacing: getChartSpacing(model),
+        style: {
+          fontFamily: typeface || 'Appian Open Sans'
+        },
+        backgroundColor: 'rgba(0,0,0,0)' // transparent
+      }
+    },
+    ...chartSpecificOptions
+  );
+}
 
 export function getColorScheme(model) {
   const colorScheme = model.colorScheme;
-  const numberOfSeries = (model.series || {}).size;
+  const numberOfSeries = (model.series || {}).length;
 
   if (!colorScheme) {
     return __COLORS.CLASSIC;
@@ -71,27 +390,14 @@ export function getColorScheme(model) {
   return colorValues;
 }
 
-// This function will get the type of X axis
-export function getXAxisType(series, categories) {
-  let datapoint = series[0].data[0][getDataIndex(series, 'x')];
-
-  if (isDatetimeValue(datapoint)) {
-    return 'datetime'
-  } else if (categories) {
-    return 'categories';
-  } else {
-    return 'linear';
-  }
-}
-
 // This function will convert dates and datetimes in the X series to timestamps
-export function processSeries(series) {
-  let dataIndex = getDataIndex(series, 'x');
+export function processSeries(model) {
+  let dataIndex = getDataIndex(model.series, 'x');
 
-  if (getAxisType(series, null) === 'datetime') {
-    series.forEach((e, i) => {
+  if (model.xAxisType === 'datetime') {
+    model.series.forEach((e, i) => {
       e.data.forEach((f, j) => {
-        series[i].data[j][dataIndex] = Date.parse(series[i].data[j][dataIndex]);
+        model.series[i].data[j][dataIndex] = Date.parse(model.series[i].data[j][dataIndex]);
       });
     });
   }
@@ -99,12 +405,86 @@ export function processSeries(series) {
   return series;
 }
 
-// This function will determine if value is a datetime value
-function isDatetimeValue(datapoint) {
-  return !isNaN(Date.parse(datapoint)); //  TODO - add regex matching here
-}
-
 // This function will return X if the series is in the format of {x: 1, y: 2} or 0 if the series is in the format of [1,2]
 function getDataIndex(series, axis) {
   return series[0].data[0][axis] ? axis : 0;
+}
+
+export function getXAxisRotation(
+  model,
+  numDegreesXAxis = -45
+) {
+
+  let clientWidth = getClientWidth();
+  let minWidth = getChartMinWidth(model.series);
+
+  if (!model.series || !model.series.length) {
+    return {rotation: 0, formatter: null};
+  }
+
+  const scrollsHorizontally = minWidth > clientWidth;
+  const horizontalCharLimit = getHorizontalCharLimit(
+    model.series,
+    scrollsHorizontally ? minWidth : clientWidth
+  );
+
+  const hasUnlabelledCategories = getLongestSeriesData(model.series).length > (model.categories ? model.categories.length : 0);
+  const labelExceedsHorizontalSpace =
+    (model.categories && model.categories.some(
+        // Measures the word length in each label as highcharts does not wrap continuous words in labels
+        (c) =>
+          c.split(' ').some((string) => string.length > horizontalCharLimit)
+    )) || (hasUnlabelledCategories && NULL_CATEGORY_LABEL_LENGTH > horizontalCharLimit);
+
+  if (scrollsHorizontally || labelExceedsHorizontalSpace) {
+    return {rotation: numDegreesXAxis, formatter: null};
+  }
+  return {rotation: 0, formatter: null};
+}
+
+export function getLongestSeriesData(series) {
+  const getLongestArray = (maxArray, curArray) => {
+    return maxArray.length > curArray.length ? maxArray : curArray;
+  };
+  return series.map((s) => (s && s.data) || []).reduce(getLongestArray, []);
+}
+
+export function getHorizontalCharLimit(series, chartWidth) {
+  const numCategoriesRendered = series
+    ? getLongestSeriesData(series).length
+    : 0;
+  if (numCategoriesRendered === 0) {
+    return null;
+  }
+  const pixelsPerCategory = chartWidth / numCategoriesRendered;
+  const horizontalCharLimit = pixelsPerCategory / CHARACTER_PX;
+  return horizontalCharLimit;
+}
+
+export function getTruncatedLabelFormatter(maxLabelLength) {
+  return function () {
+    return this.value.length > maxLabelLength
+      ? this.value.slice(0, maxLabelLength) + String.fromCharCode(8230)
+      : this.value;
+  };
+}
+
+export function getChartMinWidth(series, isStacked = false, zoomable = false) {
+  if (!series || !series.length || zoomable) {
+    return 0;
+  }
+  const numCategoriesRendered = getLongestSeriesData(series).length;
+  const numBars = numCategoriesRendered * (isStacked ? 1 : series.length);
+  const minimumWidth =
+    (numBars * MIN_BAR_WIDTH) / HIGHCHARTS_USABLE_COLUMN_RATIO;
+  return minimumWidth;
+}
+
+export function getClientWidth() {
+  return document.getElementById("container").clientWidth;
+}
+
+function getIfNotNull(map, key, defaultValue) {
+  const value = map.get(key, defaultValue);
+  return value == null ? defaultValue : value;
 }
