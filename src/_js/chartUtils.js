@@ -13,9 +13,9 @@ export const ChartTypes = {
   WordCloud: 'WordCloud',
 };
 
-export const __COLORS_VAL = 'Invalid value for "colorScheme". "colorScheme" must be null, a list of colors, or one of the following values: "CLASSIC" (default), "MIDNIGHT", "OCEAN", "MOSS", "BERRY", "PARACHUTE", "RAINFOREST", or "SUNSET".';
+const __COLORS_VAL = 'Invalid value for "colorScheme". "colorScheme" must be null, a list of colors, or one of the following values: "CLASSIC" (default), "MIDNIGHT", "OCEAN", "MOSS", "BERRY", "PARACHUTE", "RAINFOREST", or "SUNSET".';
 
-export const __COLORS = {
+const __COLORS = {
   CLASSIC: [
     '#619ED6',
     '#6BA547',
@@ -40,7 +40,7 @@ export const __COLORS = {
 };
 
 // The patterns used for chart pattern fills
-export const CHART_PATTERN_FILLS = [
+const CHART_PATTERN_FILLS = [
   'M 0 0 L 10 10 M 9 -1 L 11 1 M -1 9 L 1 11',
   'M 0 10 L 10 0 M -1 1 L 1 -1 M 9 11 L 11 9',
   'M 3 0 L 3 10 M 8 0 L 8 10',
@@ -56,14 +56,14 @@ export const CHART_PATTERN_FILLS = [
 export const TEXT_WEIGHT_SEMI_BOLD = 600;
 export const FONT_SIZE = 11;
 
-export const TEXT_COLOR_DARK = '#222';
-export const TEXT_COLOR_LIGHT = '#eee';
+const TEXT_COLOR_DARK = '#222';
+const TEXT_COLOR_LIGHT = '#eee';
 
 const CHARACTER_PX = 10;
 const NULL_CATEGORY_LABEL_LENGTH = 9;
-export const MAX_ANGLED_LABEL_LENGTH = 20;
-export const MAX_HORIZ_LABEL_LENGTH = 35;
-export const MICRO_MAX_HORIZ_LABEL_LENGTH = 20;
+const MAX_ANGLED_LABEL_LENGTH = 20;
+const MAX_HORIZ_LABEL_LENGTH = 35;
+const MICRO_MAX_HORIZ_LABEL_LENGTH = 20;
 const MIN_BAR_WIDTH = 10;
 const HIGHCHARTS_USABLE_COLUMN_RATIO = 0.6;
 
@@ -71,27 +71,31 @@ export function getModel(newValues, type) {
   let model = new Model();
   model.type = type;
   model.height = newValues.height;
+  model.categories = newValues.categories;
   model.showLegend = newValues.showLegend;
   model.showTooltips = newValues.showTooltips;
   model.showDataLabels = newValues.showDataLabels;
   model.showLinks = newValues.showLinks;
-  model.series = newValues.series;
-  model.threshold = newValues.threshold;
-  model.colorScheme = newValues.colorScheme;
-  model.colorScheme = newValues.colorScheme;
   model.xAxisTitle = newValues.xAxisTitle;
   model.yAxisTitle = newValues.yAxisTitle;
-  model.xAxisStyle = newValues.xAxisStyle;
-  model.yAxisStyle = newValues.yAxisStyle;
   model.xAxisType = newValues.xAxisType;
   model.xAxisFormat = newValues.xAxisFormat;
-  model.splitSeries = newValues.splitSeries;
+  model.xAxisStyle = newValues.xAxisStyle;
+  model.yAxisStyle = newValues.yAxisStyle;
+  model.yAxisMin = newValues.yAxisMin;
+  model.yAxisMax = newValues.yAxisMax;
+  model.minSize = newValues.minSize;
+  model.maxSize = newValues.maxSize;
   model.allowDecimalAxisLabels = newValues.allowDecimalAxisLabels;
+  model.threshold = newValues.threshold;
+  model.splitSeries = newValues.splitSeries;
+  model.series = newValues.series;
+  model.colorScheme = newValues.colorScheme;
   model.colors = getColorScheme(model);
   model.validations = getValidations(model);
 
   if (model.validations.length > 0) {
-    model.height = '0px';
+    model.height = 16;
   }
 
   if (model.height === 'auto') {
@@ -103,7 +107,7 @@ export function getModel(newValues, type) {
   return model;
 }
 
-export function getValidations(model) {
+function getValidations(model) {
   let validations = [];
   if (!model.colors) {
     validations.push(__COLORS_VAL);
@@ -355,7 +359,7 @@ export function getChartOptions(
       chart: {
         spacing: getChartSpacing(model),
         style: {
-          fontFamily: 'Appian Open Sans'
+          fontFamily: 'Calibri, Helvetica, sans-serif' // TODO - Appian Fonts
         },
         backgroundColor: 'rgba(0,0,0,0)' // transparent
       }
@@ -364,7 +368,7 @@ export function getChartOptions(
   );
 }
 
-export function getColorScheme(model) {
+function getColorScheme(model) {
   const colorScheme = model.colorScheme;
   const numberOfSeries = (model.series || {}).length;
 
@@ -392,10 +396,10 @@ export function getColorScheme(model) {
 }
 
 // This function will convert dates and datetimes in the X series to timestamps
-export function processSeries(model) {
-  let dataIndex = getDataIndex(model.series, 'x');
-
+function processSeries(model) {
   if (model.xAxisType === 'datetime') {
+    let dataIndex = getDataIndex(model.series, 'x');
+    
     model.series.forEach((e, i) => {
       e.data.forEach((f, j) => {
         model.series[i].data[j][dataIndex] = Date.parse(model.series[i].data[j][dataIndex]);
@@ -443,7 +447,7 @@ export function getXAxisRotation(
   return {rotation: 0, formatter: null};
 }
 
-export function getLongestSeriesData(series) {
+function getLongestSeriesData(series) {
   const getLongestArray = (maxArray, curArray) => {
     return maxArray.length > curArray.length ? maxArray : curArray;
   };

@@ -5,7 +5,7 @@ import {
   getModel,
   getChartOptions,
   ChartTypes,
- } from '../../chartUtils'
+} from '../../_js/chartUtils'
 
 import {merge} from 'lodash';
 

@@ -1,3 +1,5 @@
+import { ChartTypes } from './chartUtils';
+
 export class Model {
   get type() {
     return this._type;
@@ -24,7 +26,7 @@ export class Model {
     return this._showLegend;
   }
   set showLegend(showLegend) {
-    this._showLegend == null ? true : showLegend;
+    this._showLegend = showLegend == null ? true : showLegend;
   }
 
   get showTooltips() {
@@ -46,13 +48,6 @@ export class Model {
   }
   set showLinks(showLinks) {
     this._showTooltips = showLinks == null ? false : showLinks;
-  }
-
-  get allowDecimalAxisLabels() {
-    return this._allowDecimalAxisLabels;
-  }
-  set allowDecimalAxisLabels(allowDecimalAxisLabels) {
-    this._allowDecimalAxisLabels = allowDecimalAxisLabels == null ? false : allowDecimalAxisLabels;
   }
 
   get xAxisTitle() {
@@ -115,8 +110,10 @@ export class Model {
     return this._minSize;
   }
   set minSize(minSize) {
-    if (minSize == null && this.type === ChartTypes.PackedBubble) {
+    if (!minSize && this.type === ChartTypes.PackedBubble) {
       this._minSize = "10%";
+    } else if (minSize) {
+      this._minSize = minSize;
     }
   }
 
@@ -124,9 +121,18 @@ export class Model {
     return this._maxSize;
   }
   set maxSize(maxSize) {
-    if (maxSize == null && this.type === ChartTypes.PackedBubble) {
+    if (!maxSize && this.type === ChartTypes.PackedBubble) {
       this._maxSize = "50%";
+    } else if (maxSize) {
+      this._maxSize = maxSize;
     }
+  }
+
+  get allowDecimalAxisLabels() {
+    return this._allowDecimalAxisLabels;
+  }
+  set allowDecimalAxisLabels(allowDecimalAxisLabels) {
+    this._allowDecimalAxisLabels = allowDecimalAxisLabels == null ? false : allowDecimalAxisLabels;
   }
 
   get threshold() {
@@ -150,10 +156,24 @@ export class Model {
     this._series = series;
   }
 
+  get colorScheme() {
+    return this._colorScheme;
+  }
+  set colorScheme(colorScheme) {
+    this._colorScheme = colorScheme;
+  }
+
   get colors() {
     return this._colors;
   }
   set colors(colors) {
     this._colors = colors;
+  }
+
+  get validations() {
+    return this._validations;
+  }
+  set validations(validations) {
+    this._validations = validations;
   }
 }

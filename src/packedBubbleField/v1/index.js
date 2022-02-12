@@ -6,14 +6,15 @@ import {
   getModel,
   getChartOptions,
   ChartTypes,
- } from '../../chartUtils'
+} from '../../_js/chartUtils'
 
 import {merge} from 'lodash';
 
 let chart;
 
 Appian.Component.onNewValue(function (newValues) {
-  let model = getModel(newValues, ChartTypes.SankeyDiagram);
+
+  let model = getModel(newValues, ChartTypes.PackedBubble);
 
   Appian.Component.setValidations(model.validations);
 

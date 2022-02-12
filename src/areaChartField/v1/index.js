@@ -5,15 +5,18 @@ require('highcharts/modules/wordcloud')(Highcharts);
 import {
   getModel,
   getChartOptions,
+  getXAxisRotation,
   ChartTypes,
- } from '../../chartUtils'
+  TEXT_WEIGHT_SEMI_BOLD,
+  FONT_SIZE
+} from '../../_js/chartUtils'
 
 import {merge} from 'lodash';
 
 let chart;
 
 Appian.Component.onNewValue(function (newValues) {
-  let model = getModel(newValues, ChartTypes.SankeyDiagram);
+  let model = getModel(newValues, ChartTypes.AreaChart);
 
   Appian.Component.setValidations(model.validations);
 
@@ -52,13 +55,13 @@ Appian.Component.onNewValue(function (newValues) {
         title: {
           text: escape(model.xAxisTitle),
           style: {
-            fontWeight: __TEXT_WEIGHT_SEMI_BOLD
+            fontWeight: TEXT_WEIGHT_SEMI_BOLD
           }
         },
         labels: {
           rotation,
           style: {
-            fontSize: __FONT_SIZE,
+            fontSize: FONT_SIZE,
             textOverflow: 'ellipsis'
           },
           format: model.xAxisFormat,
@@ -89,7 +92,7 @@ Appian.Component.onNewValue(function (newValues) {
         title: {
           text: escape(model.yAxisTitle),
           style: {
-            fontWeight: __TEXT_WEIGHT_SEMI_BOLD
+            fontWeight: TEXT_WEIGHT_SEMI_BOLD
           }
         },
         allowDecimals: model.allowDecimalAxisLabels
