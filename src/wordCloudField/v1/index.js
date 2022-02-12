@@ -19,8 +19,13 @@ Appian.Component.onNewValue(function (newValues) {
   let chartOptions = getChartOptions(
     model,
     {
+      chart: {
+        type: 'wordcloud'
+      },
       series: [{
         type: 'wordcloud',
+        data: model.series,
+        name: 'Occurrences'
       }],
       plotOptions: model.showLinks ? {
         series: {
