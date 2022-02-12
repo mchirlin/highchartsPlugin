@@ -68,9 +68,9 @@ const MIN_BAR_WIDTH = 10;
 const HIGHCHARTS_USABLE_COLUMN_RATIO = 0.6;
 
 export function getModel(newValues, type) {
-  let containerHeight = newValues.height;
-
-  let model = Model(type);
+  let model = new Model();
+  model.type = type;
+  model.height = newValues.height;
   model.showLegend = newValues.showLegend;
   model.showTooltips = newValues.showTooltips;
   model.showDataLabels = newValues.showDataLabels;
@@ -91,19 +91,20 @@ export function getModel(newValues, type) {
   model.validations = getValidations(model);
 
   if (model.validations.length > 0) {
-    containerHeight = '0px';
+    model.height = '0px';
   }
 
-  if (containerHeight === 'auto') {
+  if (model.height === 'auto') {
     document.getElementById('container').style.height = '400px';
-  } else if (containerHeight !== 'auto') {
-    document.getElementById('container').style.height = parseInt(containerHeight) - 16 + "px";
+  } else if (model.height !== 'auto') {
+    document.getElementById('container').style.height = parseInt(model.height) - 16 + "px";
   }
 
   return model;
 }
 
 export function getValidations(model) {
+  let validations = [];
   if (!model.colors) {
     validations.push(__COLORS_VAL);
   }
@@ -113,7 +114,7 @@ export function getValidations(model) {
 
 export function getChartOptions(
   model,
-  ...chartSpecficiOptions
+  ...chartSpecificOptions
 ) {
   const accentColor = "#1d659c";
   const isBarChart = model.type === ChartTypes.BarChart;
@@ -257,7 +258,7 @@ export function getChartOptions(
         },
         enabled: model.showLegend,
         padding: model.height === 'MICRO' || isPieChart ? 2 : 5, // default is 8
-        symbolHeight: IS_REACT_NATIVE || useLargerLegendItems ? 13 : 10 // defaults to font size, needed to prevent legend circle from being cut off
+        symbolHeight: useLargerLegendItems ? 13 : 10 // defaults to font size, needed to prevent legend circle from being cut off
       },
       plotOptions: {
         // bar: {
@@ -354,7 +355,7 @@ export function getChartOptions(
       chart: {
         spacing: getChartSpacing(model),
         style: {
-          fontFamily: typeface || 'Appian Open Sans'
+          fontFamily: 'Appian Open Sans'
         },
         backgroundColor: 'rgba(0,0,0,0)' // transparent
       }
@@ -402,7 +403,7 @@ export function processSeries(model) {
     });
   }
 
-  return series;
+  return model.series;
 }
 
 // This function will return X if the series is in the format of {x: 1, y: 2} or 0 if the series is in the format of [1,2]
@@ -484,7 +485,42 @@ export function getClientWidth() {
   return document.getElementById("container").clientWidth;
 }
 
-function getIfNotNull(map, key, defaultValue) {
-  const value = map.get(key, defaultValue);
-  return value == null ? defaultValue : value;
+export function getChartSpacing(model) {
+  const height = model.height;
+  const chartType = model.type;
+  const isColumnChart = chartType === ChartTypes.ColumnChart;
+  const isLineChart = chartType === ChartTypes.LineChart;
+  const isAreaChart = chartType === ChartTypes.AreaChart;
+  const isPieChart = chartType === ChartTypes.PieChart;
+  if (
+    (isLineChart || isColumnChart || isAreaChart) &&
+    model.yAxisStyle === 'NONE'
+  ) {
+    switch (height) {
+      case 'MICRO':
+        return [5, 5, 6, 5]; // Need horizontal spacing to be 5 in order to prevent the first rotated X-Axis label from cutting off
+      case 'SHORT':
+        return [5, 5, 15, 5]; // Increased bottom spacing to accommodate scrollbar
+      default:
+        return [10, 5, 15, 5];
+    }
+  }
+  if (isPieChart) {
+    switch (height) {
+      case 'MICRO':
+      case 'SHORT':
+        return [5, 10, 6, 10]; // Pie Charts need even more horizontal spacing to avoid cut off labels
+      default:
+        return [10, 10, 10, 10];
+    }
+  } else {
+    switch (height) {
+      case 'MICRO':
+        return [5, 1, 6, 1]; // Bar Charts & some Line/Column/Area Charts only need one pixel of horizontal space to account for the axis line
+      case 'SHORT':
+        return [5, 1, 15, 1]; // Increased bottom spacing to accommodate scrollbar
+      default:
+        return [10, 1, 15, 1];
+    }
+  }
 }

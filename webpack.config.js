@@ -2,6 +2,9 @@ const path = require('path');
 const CopyPlugin = require("copy-webpack-plugin");
 var ZipPlugin = require('zip-webpack-plugin');
 
+var PACKAGE = require('./package.json');
+var version = PACKAGE.version;
+
 const plugins = [
   {name: "wordCloudField", version: "v1"},
   {name: "packedBubbleField", version: "v1"},
@@ -45,7 +48,7 @@ module.exports = {
     }),
     new ZipPlugin({
       path: '../zip',
-      filename: 'highcharts.zip',
+      filename: 'highcharts-' + version + '.zip',
     })
   ]
 };

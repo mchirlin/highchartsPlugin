@@ -1,153 +1,159 @@
 export class Model {
-  constructor(type) {
-    this.type = type;
+  get type() {
+    return this._type;
+  }
+  set type(type) {
+    this._type = type;
   }
 
-  get type() {
-    return this.type;
+  get height() {
+    return this._height;
+  }
+  set height(height) {
+    this._height = height;
   }
 
   get categories() {
-    return this.categories;
+    return this._categories;
   }
   set categories(categories) {
-    this.categories = categories;
+    this._categories = categories;
   }
 
   get showLegend() {
-    return this.showLegend;
+    return this._showLegend;
   }
   set showLegend(showLegend) {
-    this.showLegend == null ? true : showLegend;
+    this._showLegend == null ? true : showLegend;
   }
 
   get showTooltips() {
-    return this.showTooltips ;
+    return this._showTooltips ;
   }
   set showTooltips(showTooltips) {
-    this.showTooltips = showTooltips == null ? true : showTooltips;
+    this._showTooltips = showTooltips == null ? true : showTooltips;
   }
 
   get showDataLabels() {
-    return this.showDataLabels;
+    return this._showDataLabels;
   }
   set showDataLabels(showDataLabels) {
-    this.showDataLabels = showDataLabels == null ? true : showDataLabels;
+    this._showDataLabels = showDataLabels == null ? true : showDataLabels;
   }
 
   get showLinks() {
-    return this.showTooltips;
+    return this._showTooltips;
   }
   set showLinks(showLinks) {
-    this.showLinks = showLinks == null ? false : showLinks;
+    this._showTooltips = showLinks == null ? false : showLinks;
   }
 
   get allowDecimalAxisLabels() {
-    return this.allowDecimalAxisLabels;
+    return this._allowDecimalAxisLabels;
   }
   set allowDecimalAxisLabels(allowDecimalAxisLabels) {
-    this.allowDecimalAxisLabels = allowDecimalAxisLabels == null ? false : allowDecimalAxisLabels;
+    this._allowDecimalAxisLabels = allowDecimalAxisLabels == null ? false : allowDecimalAxisLabels;
   }
 
   get xAxisTitle() {
-    return this.xAxisTitle;
+    return this._xAxisTitle;
   }
   set xAxisTitle(xAxisTitle) {
-    this.xAxisTitle = xAxisTitle;
+    this._xAxisTitle = xAxisTitle;
   }
 
   get yAxisTitle() {
-    return this.yAxisTitle;
+    return this._yAxisTitle;
   }
   set yAxisTitle(yAxisTitle) {
-    this.yAxisTitle = yAxisTitle;
+    this._yAxisTitle = yAxisTitle;
   }
 
   get xAxisType() {
-    return this.xAxisType;
+    return this._xAxisType;
   }
   set xAxisType(xAxisType) {
-    this.xAxisType = xAxisType;
+    this._xAxisType = xAxisType;
   }
 
   get xAxisFormat() {
-    return this.xAxisFormat;
+    return this._xAxisFormat;
   }
   set xAxisFormat(xAxisFormat) {
-    this.xAxisFormat = xAxisFormat;
+    this._xAxisFormat = xAxisFormat;
   }
 
   get xAxisStyle() {
-    return this.xAxisStyle;
+    return this._xAxisStyle;
   }
   set xAxisStyle(xAxisStyle) {
-    this.xAxisStyle = xAxisStyle;
+    this._xAxisStyle = xAxisStyle;
   }
 
   get yAxisStyle() {
-    return this.yAxisStyle;
+    return this._yAxisStyle;
   }
-  set xAxisType(yAxisStyle) {
-    this.yAxisStyle = yAxisStyle;
+  set yAxisStyle(yAxisStyle) {
+    this._yAxisStyle = yAxisStyle;
   }
 
   get yAxisMin() {
-    return this.yAxisMin;
+    return this._yAxisMin;
   }
   set yAxisMin(yAxisMin) {
-    this.yAxisMin = yAxisMin;
+    this._yAxisMin = yAxisMin;
   }
 
   get yAxisMax() {
-    return this.yAxisMax;
+    return this._yAxisMax;
   }
   set yAxisMax(yAxisMax) {
-    this.yAxisMax = yAxisMax;
+    this._yAxisMax = yAxisMax;
   }
 
   get minSize() {
-    return this.minSize;
+    return this._minSize;
   }
   set minSize(minSize) {
-    if(minSize == null && this.type === ChartTypes.PackedBubbleminSize) {
-      this.minSize = "10%";
+    if (minSize == null && this.type === ChartTypes.PackedBubble) {
+      this._minSize = "10%";
     }
   }
 
   get maxSize() {
-    return this.maxSize;
+    return this._maxSize;
   }
   set maxSize(maxSize) {
-    if(maxSize == null && this.type === ChartTypes.PackedBubbleminSize) {
-      this.maxSize = "50%";
+    if (maxSize == null && this.type === ChartTypes.PackedBubble) {
+      this._maxSize = "50%";
     }
   }
 
   get threshold() {
-    return this.threshold;
+    return this._threshold;
   }
   set threshold(threshold) {
-    this.threshold = threshold == null ? 0 : threshold;
+    this._threshold = threshold == null ? 0 : threshold;
   }
 
   get splitSeries() {
-    return this.splitSeries;
+    return this._splitSeries;
   }
   set splitSeries(splitSeries) {
-    this.splitSeries = splitSeries;
+    this._splitSeries = splitSeries;
   }
 
   get series() {
-    return this.series;
+    return this._series;
   }
   set series(series) {
-    this.series = series;
+    this._series = series;
   }
 
   get colors() {
-    return this.colors;
+    return this._colors;
   }
   set colors(colors) {
-    this.colors = colors;
+    this._colors = colors;
   }
 }

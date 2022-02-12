@@ -32,9 +32,6 @@ Appian.Component.onNewValue(function (newValues) {
           format: '<span style="color:{point.color}">● </span><span style="font-weight: bold;" > ' +
             '{point.x:%d %b %Y}</span><br/>{point.label}'
         },
-        marker: {
-          symbol: 'circle'
-        },
         data: data
       }],
       tooltip: {
@@ -47,7 +44,6 @@ Appian.Component.onNewValue(function (newValues) {
         shadow: false,
         borderColor: '#eee',
         backgroundColor: 'rgba(255,255,255,0.92)',
-        enabled: showTooltips,
         outside: true,
         style: {
           width: 300

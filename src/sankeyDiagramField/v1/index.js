@@ -19,20 +19,9 @@ Appian.Component.onNewValue(function (newValues) {
   let chartOptions = getChartOptions(
     model,
     {
-      colors: colors,
-      series: [{
-        data: data,
+      chart: {
         type: 'sankey'
-      }],
-      tooltip: {
-        enabled: showTooltips
-      },
-      title: {
-        text: undefined
-      },
-      credits: {
-        enabled: false
-      },
+      }
     }
   );
 

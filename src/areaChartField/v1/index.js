@@ -42,15 +42,15 @@ Appian.Component.onNewValue(function (newValues) {
       plotOptions: {
         area: {
           dataLabels: {
-            enabled: showDataLabels,
+            enabled: model.showDataLabels,
           },
           threshold: model.threshold,
         }
       },
       xAxis: {
-        visible: xAxisStyle !== 'NONE',
+        visible: model.xAxisStyle !== 'NONE',
         title: {
-          text: escape(xAxisTitle),
+          text: escape(model.xAxisTitle),
           style: {
             fontWeight: __TEXT_WEIGHT_SEMI_BOLD
           }
@@ -61,38 +61,38 @@ Appian.Component.onNewValue(function (newValues) {
             fontSize: __FONT_SIZE,
             textOverflow: 'ellipsis'
           },
-          format: xAxisFormat,
+          format: model.xAxisFormat,
         },
-        allowDecimals: allowDecimalAxisLabels,
-        categories: categories,
-        type: xAxisType
+        allowDecimals: model.allowDecimalAxisLabels,
+        categories: model.categories,
+        type: model.xAxisType
       },
       yAxis: {
-        visible: yAxisStyle !== 'NONE',
-        maxPadding: yAxisStyle === 'MINIMAL' ? 0 : undefined,
+        visible: model.yAxisStyle !== 'NONE',
+        maxPadding: model.yAxisStyle === 'MINIMAL' ? 0 : undefined,
         tickPositioner:
-          yAxisStyle === 'MINIMAL' || yAxisStyle === 'NONE' ?
+          model.yAxisStyle === 'MINIMAL' || model.yAxisStyle === 'NONE' ?
           function () {
             const defaultTicks = this.tickPositions;
-            const formattedMin = allowDecimalAxisLabels
-              ? yAxisMin
-              : Math.floor(yAxisMin);
+            const formattedMin = model.allowDecimalAxisLabels
+              ? model.yAxisMin
+              : Math.floor(model.yAxisMin);
             const min = formattedMin || defaultTicks[0];
-            const formattedMax = allowDecimalAxisLabels
-              ? yAxisMax
-              : Math.ceil(yAxisMax);
+            const formattedMax = model.allowDecimalAxisLabels
+              ? model.yAxisMax
+              : Math.ceil(model.yAxisMax);
             const max =
               formattedMax || defaultTicks[defaultTicks.length - 1];
             return [min, max];
           }
         : undefined,
         title: {
-          text: escape(yAxisTitle),
+          text: escape(model.yAxisTitle),
           style: {
             fontWeight: __TEXT_WEIGHT_SEMI_BOLD
           }
         },
-        allowDecimals: allowDecimalAxisLabels
+        allowDecimals: model.allowDecimalAxisLabels
       }
     }
   );

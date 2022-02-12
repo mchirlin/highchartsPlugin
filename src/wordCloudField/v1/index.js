@@ -22,7 +22,7 @@ Appian.Component.onNewValue(function (newValues) {
       series: [{
         type: 'wordcloud',
       }],
-      plotOptions: showLinks ? {
+      plotOptions: model.showLinks ? {
         series: {
           cursor: 'pointer',
           events: {

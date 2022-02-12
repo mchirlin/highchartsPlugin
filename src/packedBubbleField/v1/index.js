@@ -25,10 +25,10 @@ Appian.Component.onNewValue(function (newValues) {
       },
       plotOptions: {
         packedbubble: {
-          minSize: minSize,
-          maxSize: maxSize,
+          minSize: model.minSize,
+          maxSize: model.maxSize,
           dataLabels: {
-            enabled: showDataLabels,
+            enabled: model.showDataLabels,
             style: {
               color: 'black',
               textOutline: 'none',
@@ -37,7 +37,7 @@ Appian.Component.onNewValue(function (newValues) {
             format: '{point.name}'
           },
           layoutAlgorithm: {
-            splitSeries: splitSeries
+            splitSeries: model.splitSeries
           }
         }
       },
