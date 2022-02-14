@@ -4,15 +4,28 @@ require('highcharts/modules/timeline')(Highcharts);
 import {
   getModel,
   getChartOptions,
+  processSeries,
   ChartTypes,
+  TEXT_COLOR_DARK,
+  TEXT_WEIGHT_SEMI_BOLD
 } from '../../_js/chartUtils'
 
 import {merge} from 'lodash';
 
 let chart;
 
+var tooltipData = '{point.y}';
+
 Appian.Component.onNewValue(function (newValues) {
+  newValues.xAxisType = 'datetime';
+
   let model = getModel(newValues, ChartTypes.TimelineChart);
+  let hasDatetime = model.series[0].data[0].x ? true : false;
+
+  model.xAxisType = hasDatetime ? 'datetime' : 'linear';
+  model.marker = hasDatetime ? 'circle' : 'square';
+  model.dataLabelFormat = hasDatetime ? '<span style="color:{point.color}">● </span><span style="font-weight: bold;" > ' +
+    '{point.x:%d %b %Y}</span><br/>{point.label}' : undefined;
 
   Appian.Component.setValidations(model.validations);
 
@@ -23,32 +36,31 @@ Appian.Component.onNewValue(function (newValues) {
         zoomType: 'x',
         type: 'timeline'
       },
+      tooltip: {
+        pointFormat: '{point.description}',
+      },
+      xAxis: {
+        visible: false,
+        type: model.xAxisType,
+      },
       yAxis: {
         gridLineWidth: 1,
+        title: null,
+        labels: {
+          enabled: false
+        }
       },
       series: [{
         dataLabels: {
+          enabled: model.showDataLabels,
           allowOverlap: false,
-          format: '<span style="color:{point.color}">● </span><span style="font-weight: bold;" > ' +
-            '{point.x:%d %b %Y}</span><br/>{point.label}'
+          format: model.dataLabelFormat,
+          width: 100,
         },
-        data: data
-      }],
-      tooltip: {
-        pointFormat:
-          `<span style="color:${__TEXT_COLOR_DARK};">{series.name}: </span>` +
-          `<span style="font-weight: ${__TEXT_WEIGHT_SEMI_BOLD}">${tooltipData}</span><br/>`,
-        shared: true,
-        useHTML: true,
-        borderRadius: 0,
-        shadow: false,
-        borderColor: '#eee',
-        backgroundColor: 'rgba(255,255,255,0.92)',
-        outside: true,
-        style: {
-          width: 300
+        marker: {
+          symbol: model.marker
         }
-      }
+      }]
     }
   );
 

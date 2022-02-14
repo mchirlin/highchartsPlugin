@@ -11,6 +11,7 @@ export const ChartTypes = {
   PackedBubble: 'PackedBubble',
   TimelineChart: 'TimelineChart',
   WordCloud: 'WordCloud',
+  Spiderweb: 'Spiderweb'
 };
 
 const __COLORS_VAL = 'Invalid value for "colorScheme". "colorScheme" must be null, a list of colors, or one of the following values: "CLASSIC" (default), "MIDNIGHT", "OCEAN", "MOSS", "BERRY", "PARACHUTE", "RAINFOREST", or "SUNSET".';
@@ -56,8 +57,8 @@ const CHART_PATTERN_FILLS = [
 export const TEXT_WEIGHT_SEMI_BOLD = 600;
 export const FONT_SIZE = 11;
 
-const TEXT_COLOR_DARK = '#222';
-const TEXT_COLOR_LIGHT = '#eee';
+export const TEXT_COLOR_DARK = '#222';
+export const TEXT_COLOR_LIGHT = '#eee';
 
 const CHARACTER_PX = 10;
 const NULL_CATEGORY_LABEL_LENGTH = 9;
@@ -89,7 +90,7 @@ export function getModel(newValues, type) {
   model.allowDecimalAxisLabels = newValues.allowDecimalAxisLabels;
   model.threshold = newValues.threshold;
   model.splitSeries = newValues.splitSeries;
-  model.series = newValues.series;
+  model.series = newValues.series[0].data ? newValues.series : [{data: newValues.series}];
   model.colorScheme = newValues.colorScheme;
   model.colors = getColorScheme(model);
   model.validations = getValidations(model);
@@ -125,6 +126,7 @@ export function getChartOptions(
   const isPieChart = model.type === ChartTypes.PieChart;
   const isColumnChart = model.type === ChartTypes.ColumnChart;
   const isAreaChart = model.type === ChartTypes.AreaChart;
+  const isTimelineChart = model.type === ChartTypes.TimelineChart;
   // const isAccentDark = !!accentColor && isHexColorDark(accentColor);
   // const inDarkAccentBackground = context.inAccentBackground && isAccentDark;
   // const inDarkBackground = inDarkAccentBackground || context.inDarkBackground;
@@ -140,7 +142,7 @@ export function getChartOptions(
   // const useLargerLegendItems =
   //  chartPatternFill &&
   //  (isBarChart || isColumnChart || isPieChart || isAreaChart); */
-  // const tooltipColor = usePatternFill ? TEXT_COLOR_DARK : '{series.color}';
+  const tooltipColor = usePatternFill ? TEXT_COLOR_DARK : '{series.color}';
   // chartContext = context;
 
   return merge(
@@ -179,8 +181,8 @@ export function getChartOptions(
           }
         }
       },
-      // yAxis: {
-      //   visible: model.get('yAxisStyle') !== 'NONE',
+      yAxis: {
+        visible: model.yAxisStyle !== 'NONE',
       //   maxPadding: model.get('yAxisStyle') === 'MINIMAL' ? 0 : undefined,
       //   tickPositioner:
       //     model.get('yAxisStyle') === 'MINIMAL' ||
@@ -233,20 +235,20 @@ export function getChartOptions(
       //     colorScheme,
       //     inDarkBackground
       //   )
-      // },
-      // tooltip: {
-      //   pointFormat:
-      //     `<span style="color:${tooltipColor};">{series.name}: </span>` +
-      //     `<span style="font-weight: ${TEXT_WEIGHT_SEMI_BOLD}">${tooltipData}</span><br/>`,
-      //   shared: true,
-      //   useHTML: true,
-      //   borderRadius: 0,
-      //   shadow: false,
-      //   borderColor: '#eee',
-      //   backgroundColor: 'rgba(255,255,255,0.92)',
-      //   enabled: getIfNotNull(model, 'showTooltips', true),
-      //   outside: true
-      // },
+      },
+      tooltip: {
+        // Use the default tooltip styling for Timeline Charts
+        pointFormat: `<span style="color:${tooltipColor};">{series.name}: </span>` +
+          `<span style="font-weight: ${TEXT_WEIGHT_SEMI_BOLD}">${tooltipData}</span><br/>`,
+        shared: true,
+        useHTML: true,
+        borderRadius: 0,
+        shadow: false,
+        borderColor: '#eee',
+        backgroundColor: 'rgba(255,255,255,0.92)',
+        enabled: model.showTooltips,
+        outside: true
+      },
       legend: {
         // rtl: isRTLLanguage,
         itemHoverStyle: {
@@ -396,10 +398,10 @@ function getColorScheme(model) {
 }
 
 // This function will convert dates and datetimes in the X series to timestamps
-function processSeries(model) {
+export function processSeries(model) {
+  let dataIndex = model.series[0].data[0]['x'] == null ? 0 : 'x';
+
   if (model.xAxisType === 'datetime') {
-    let dataIndex = getDataIndex(model.series, 'x');
-    
     model.series.forEach((e, i) => {
       e.data.forEach((f, j) => {
         model.series[i].data[j][dataIndex] = Date.parse(model.series[i].data[j][dataIndex]);

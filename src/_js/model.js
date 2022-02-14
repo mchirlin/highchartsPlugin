@@ -40,14 +40,14 @@ export class Model {
     return this._showDataLabels;
   }
   set showDataLabels(showDataLabels) {
-    this._showDataLabels = showDataLabels == null ? true : showDataLabels;
+    this._showDataLabels = showDataLabels == null ? false : showDataLabels;
   }
 
   get showLinks() {
-    return this._showTooltips;
+    return this._showLinks;
   }
   set showLinks(showLinks) {
-    this._showTooltips = showLinks == null ? false : showLinks;
+    this._showLinks = showLinks == null ? false : showLinks;
   }
 
   get xAxisTitle() {
@@ -96,7 +96,7 @@ export class Model {
     return this._yAxisMin;
   }
   set yAxisMin(yAxisMin) {
-    this._yAxisMin = yAxisMin;
+    this._yAxisMin = yAxisMin ? 0 : yAxisMin;
   }
 
   get yAxisMax() {
@@ -135,6 +135,13 @@ export class Model {
     this._allowDecimalAxisLabels = allowDecimalAxisLabels == null ? false : allowDecimalAxisLabels;
   }
 
+  get dataLabelFormat() {
+    return this._dataLabelFormat;
+  }
+  set dataLabelFormat(dataLabelFormat) {
+    this._dataLabelFormat = dataLabelFormat;
+  }
+
   get threshold() {
     return this._threshold;
   }
@@ -147,6 +154,13 @@ export class Model {
   }
   set splitSeries(splitSeries) {
     this._splitSeries = splitSeries;
+  }
+
+  get marker() {
+    return this._marker;
+  }
+  set marker(marker) {
+    this._marker = marker;
   }
 
   get series() {
