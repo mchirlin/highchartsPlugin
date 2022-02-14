@@ -322,21 +322,18 @@ export function getChartOptions(
         //     }
         //   }
         // },
-        // line: {
-        //   // Highcharts does not show series with links longer than the turboThreshold.
-        //   // Setting it to 0 disables this and will always show the series.
-        //   // See https://api.highcharts.com/highcharts/plotOptions.series.turboThreshold
-        //   turboThreshold: 0,
-        //   dataLabels: {
-        //     enabled: model.get('showDataLabels'),
-        //     style: {
-        //       textShadow: 'none',
-        //       cursor: 'default',
-        //       color: inDarkBackground ? TEXT_COLOR_LIGHT : TEXT_COLOR_DARK,
-        //       textOutline: 'none'
-        //     }
-        //   }
-        // },
+        line: {
+          turboThreshold: 0,
+          dataLabels: {
+            enabled: model.showDataLabels,
+            style: {
+              textShadow: 'none',
+              cursor: 'default',
+              color: inDarkBackground ? TEXT_COLOR_LIGHT : TEXT_COLOR_DARK,
+              textOutline: 'none'
+            }
+          }
+        },
         // area: {
         //   // Highcharts does not show series with links longer than the turboThreshold.
         //   // Setting it to 0 disables this and will always show the series.

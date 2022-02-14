@@ -42,9 +42,6 @@ Appian.Component.onNewValue(function (newValues) {
       },
       plotOptions: {
         area: {
-          dataLabels: {
-            enabled: model.showDataLabels,
-          },
           threshold: model.threshold,
         }
       },
