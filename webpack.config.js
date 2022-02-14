@@ -11,6 +11,7 @@ const plugins = [
   {name: "sankeyDiagramField", version: "v1"},
   {name: "areaChartField", version: "v1"},
   {name: "timelineChartField", version: "v1"},
+  {name: "spiderwebField", version: "v1"},
 ];
 
 let copyPatterns = [
