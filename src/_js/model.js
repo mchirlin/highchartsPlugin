@@ -22,6 +22,20 @@ export class Model {
     this._categories = categories;
   }
 
+  get xCategories() {
+    return this._xCategories;
+  }
+  set xCategories(xCategories) {
+    this._xCategories = xCategories;
+  }
+
+  get yCategories() {
+    return this._yCategories;
+  }
+  set yCategories(yCategories) {
+    this._yCategories = yCategories;
+  }
+
   get showLegend() {
     return this._showLegend;
   }

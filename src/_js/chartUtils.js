@@ -11,7 +11,8 @@ export const ChartTypes = {
   PackedBubble: 'PackedBubble',
   TimelineChart: 'TimelineChart',
   WordCloud: 'WordCloud',
-  Spiderweb: 'Spiderweb'
+  Spiderweb: 'Spiderweb',
+  Heatmap: 'Heatmap'
 };
 
 const __COLORS_VAL = 'Invalid value for "colorScheme". "colorScheme" must be null, a list of colors, or one of the following values: "CLASSIC" (default), "MIDNIGHT", "OCEAN", "MOSS", "BERRY", "PARACHUTE", "RAINFOREST", or "SUNSET".';
@@ -73,6 +74,8 @@ export function getModel(newValues, type) {
   model.type = type;
   model.height = newValues.height;
   model.categories = newValues.categories;
+  model.xCategories = newValues.xCategories;
+  model.yCategories = newValues.yCategories;
   model.showLegend = newValues.showLegend;
   model.showTooltips = newValues.showTooltips;
   model.showDataLabels = newValues.showDataLabels;
