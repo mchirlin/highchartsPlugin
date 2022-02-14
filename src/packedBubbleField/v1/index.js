@@ -1,6 +1,5 @@
 var Highcharts = require('highcharts');
 require('highcharts/highcharts-more')(Highcharts);
-require('highcharts/modules/wordcloud')(Highcharts);
 
 import {
   getModel,
