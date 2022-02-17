@@ -29,13 +29,13 @@ Appian.Component.onNewValue(function (newValues) {
       yAxis: {
         categories: model.yCategories,
         title: null,
-        reversed true
+        reversed: true
       },
-      // colorAxis: {
-      //   min: 0,
-      //   minColor: '#FFFFFF',
-      //   maxColor: Highcharts.getOptions().colors[0]
-      // },
+      colorAxis: {
+        min: 0,
+        minColor: '#FFF',
+        maxColor: model.colors[1] ? model.colors[1] : model.colors[0]
+      },
       legend: {
         align: 'right',
         layout: 'vertical',
@@ -44,6 +44,10 @@ Appian.Component.onNewValue(function (newValues) {
         y: 25,
         symbolHeight: 280
       },
+      tooltip: {
+        useHTML: true,
+        pointFormat: '<b>{series.name}:</b> {point.value}'
+      }
     }
   );
 

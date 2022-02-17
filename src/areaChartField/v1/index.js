@@ -37,8 +37,7 @@ Appian.Component.onNewValue(function (newValues) {
     {
       chart: {
           type: 'area',
-          zoomType: 'x',
-          animation: true
+          zoomType: 'x'
       },
       plotOptions: {
         area: {

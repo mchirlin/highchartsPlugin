@@ -306,4 +306,30 @@
     </parameter>
     <html-entry-point>index.html</html-entry-point>
   </component>
+  <component rule-name="organizationChartField" version="1.0.0">
+    <sdk-version>2.0.0</sdk-version>
+    <supported-user-agents>chrome edge safari mobile</supported-user-agents>
+    <icon-file>image.svg</icon-file>
+    <parameter>
+      <name>series</name>
+      <category>input-only</category>
+      <type>Dictionary?list</type>
+    </parameter>
+    <parameter>
+      <name>orientation</name>
+      <category>input-only</category>
+      <type>Text</type>
+    </parameter>
+    <parameter>
+      <name>showTooltips</name>
+      <category>input-only</category>
+      <type>Boolean</type>
+    </parameter>
+    <parameter>
+      <name>colorScheme</name>
+      <category>input-only</category>
+      <type>Variant</type>
+    </parameter>
+    <html-entry-point>index.html</html-entry-point>
+  </component>
 </appian-component-plugin>

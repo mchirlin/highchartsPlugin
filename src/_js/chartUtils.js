@@ -12,7 +12,8 @@ export const ChartTypes = {
   TimelineChart: 'TimelineChart',
   WordCloud: 'WordCloud',
   Spiderweb: 'Spiderweb',
-  Heatmap: 'Heatmap'
+  Heatmap: 'Heatmap',
+  OrganizationChart: 'OrganizationChart',
 };
 
 const __COLORS_VAL = 'Invalid value for "colorScheme". "colorScheme" must be null, a list of colors, or one of the following values: "CLASSIC" (default), "MIDNIGHT", "OCEAN", "MOSS", "BERRY", "PARACHUTE", "RAINFOREST", or "SUNSET".';
@@ -73,6 +74,7 @@ export function getModel(newValues, type) {
   let model = new Model();
   model.type = type;
   model.height = newValues.height;
+  model.orientation = newValues.orientation;
   model.categories = newValues.categories;
   model.xCategories = newValues.xCategories;
   model.yCategories = newValues.yCategories;
@@ -124,12 +126,13 @@ export function getChartOptions(
   model,
   ...chartSpecificOptions
 ) {
-  const accentColor = "#1d659c";
+  const accentColor = Appian.getAccentColor();
   const isBarChart = model.type === ChartTypes.BarChart;
   const isPieChart = model.type === ChartTypes.PieChart;
   const isColumnChart = model.type === ChartTypes.ColumnChart;
   const isAreaChart = model.type === ChartTypes.AreaChart;
   const isTimelineChart = model.type === ChartTypes.TimelineChart;
+  const isOrgChart = model.type === ChartTypes.OrganizationChart;
   // const isAccentDark = !!accentColor && isHexColorDark(accentColor);
   // const inDarkAccentBackground = context.inAccentBackground && isAccentDark;
   // const inDarkBackground = inDarkAccentBackground || context.inDarkBackground;
@@ -153,7 +156,7 @@ export function getChartOptions(
       title: {
         text: ''
       },
-      colors: model.colors,
+      ...(!isOrgChart && {colors: model.colors}),
       xAxis: {
         visible: model.xAxisStyle !== 'NONE',
         title: {
@@ -372,7 +375,8 @@ export function getChartOptions(
 
 function getColorScheme(model) {
   const colorScheme = model.colorScheme;
-  const numberOfSeries = (model.series || {}).length;
+  // Skip the first color if only a single series ()
+  const skipFirstColor = model.type === ChartTypes.AREACHART && (model.series || {}).length === 1;
 
   if (!colorScheme) {
     return __COLORS.CLASSIC;
@@ -388,8 +392,8 @@ function getColorScheme(model) {
       return __COLORS.CLASSIC;
     }
 
-    colorValues = numberOfSeries === 1 ? colorSchemeValues.slice(1) : colorSchemeValues;
-  } else if (colorSchemeType.isArray()) {
+    colorValues = skipFirstColor ? colorSchemeValues.slice(1) : colorSchemeValues;
+  } else if (Array.isArray(colorScheme)) {
     return colorScheme;
   } else {
     return __COLORS.CLASSIC;
@@ -529,4 +533,32 @@ export function getChartSpacing(model) {
         return [10, 1, 15, 1];
     }
   }
+}
+
+export function determineTextColor(color, stacking = false, inDarkBackground = false) {
+  const shouldFlipLabelColor =
+    (isSeriesColorDark(color) && stacking !== null) ||
+    (stacking == null && inDarkBackground);
+  return shouldFlipLabelColor ? TEXT_COLOR_LIGHT : TEXT_COLOR_DARK;
+}
+
+function isSeriesColorDark(color) {
+  const hexValue = color.replace('#', '');
+  const shortHex = hexValue.length === 3;
+  const r = parseInt(
+    shortHex
+      ? `0x${hexValue[0]}${hexValue[0]}`
+      : `0x${hexValue[0]}${hexValue[1]}`
+  );
+  const g = parseInt(
+    shortHex
+      ? `0x${hexValue[1]}${hexValue[1]}`
+      : `0x${hexValue[2]}${hexValue[3]}`
+  );
+  const b = parseInt(
+    shortHex
+      ? `0x${hexValue[2]}${hexValue[2]}`
+      : `0x${hexValue[4]}${hexValue[5]}`
+  );
+  return 1 - (r * 0.299 + g * 0.587 + b * 0.114) / 255 > 0.5;
 }

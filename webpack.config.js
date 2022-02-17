@@ -12,6 +12,8 @@ const plugins = [
   {name: "areaChartField", version: "v1"},
   {name: "timelineChartField", version: "v1"},
   {name: "spiderwebField", version: "v1"},
+  {name: "heatmapField", version: "v1"},
+  {name: "organizationChartField", version: "v1"},
 ];
 
 let copyPatterns = [

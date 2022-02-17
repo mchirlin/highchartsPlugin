@@ -36,32 +36,39 @@ export class Model {
     this._yCategories = yCategories;
   }
 
+  get orientation() {
+    return this._orientation;
+  }
+  set orientation(orientation) {
+    this._orientation = orientation ? orientation : "VERTICAL";
+  }
+
   get showLegend() {
     return this._showLegend;
   }
   set showLegend(showLegend) {
-    this._showLegend = showLegend == null ? true : showLegend;
+    this._showLegend = showLegend ? showLegend : true;
   }
 
   get showTooltips() {
     return this._showTooltips ;
   }
   set showTooltips(showTooltips) {
-    this._showTooltips = showTooltips == null ? true : showTooltips;
+    this._showTooltips = showTooltips ? showTooltips : true;
   }
 
   get showDataLabels() {
     return this._showDataLabels;
   }
   set showDataLabels(showDataLabels) {
-    this._showDataLabels = showDataLabels == null ? false : showDataLabels;
+    this._showDataLabels = showDataLabels ? showDataLabels : false;
   }
 
   get showLinks() {
     return this._showLinks;
   }
   set showLinks(showLinks) {
-    this._showLinks = showLinks == null ? false : showLinks;
+    this._showLinks = showLinks ? showLinks : false;
   }
 
   get xAxisTitle() {
@@ -110,7 +117,7 @@ export class Model {
     return this._yAxisMin;
   }
   set yAxisMin(yAxisMin) {
-    this._yAxisMin = yAxisMin ? 0 : yAxisMin;
+    this._yAxisMin = yAxisMin ? yAxisMin : 0;
   }
 
   get yAxisMax() {
@@ -146,7 +153,7 @@ export class Model {
     return this._allowDecimalAxisLabels;
   }
   set allowDecimalAxisLabels(allowDecimalAxisLabels) {
-    this._allowDecimalAxisLabels = allowDecimalAxisLabels == null ? false : allowDecimalAxisLabels;
+    this._allowDecimalAxisLabels = allowDecimalAxisLabels ? allowDecimalAxisLabels : false;
   }
 
   get dataLabelFormat() {
@@ -160,7 +167,7 @@ export class Model {
     return this._threshold;
   }
   set threshold(threshold) {
-    this._threshold = threshold == null ? 0 : threshold;
+    this._threshold = threshold ? threshold : 0;
   }
 
   get splitSeries() {
