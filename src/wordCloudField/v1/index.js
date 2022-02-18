@@ -26,17 +26,7 @@ Appian.Component.onNewValue(function (newValues) {
         type: 'wordcloud',
         data: model.series,
         name: 'Occurrences'
-      }],
-      plotOptions: model.showLinks ? {
-        series: {
-          cursor: 'pointer',
-          events: {
-            click: function (event) {
-              Appian.Component.saveValue('link', event.target.point.options);
-            }
-          }
-        }
-      } : {},
+      }]
     }
   )
 

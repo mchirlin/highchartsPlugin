@@ -273,6 +273,14 @@ export function getChartOptions(
         symbolHeight: useLargerLegendItems ? 13 : 10 // defaults to font size, needed to prevent legend circle from being cut off
       },
       plotOptions: {
+        series: model.showLinks ? {
+          cursor: 'pointer',
+          events: {
+            click: function (event) {
+              Appian.Component.saveValue('link', event.point.options);
+            }
+          }
+        } : {},
         // bar: {
         //   borderWidth: 1,
         //   dataLabels: {
