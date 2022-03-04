@@ -1,15 +1,13 @@
-var Highcharts = require('highcharts');
 require('highcharts/modules/sankey')(Highcharts);
 require('highcharts/modules/organization')(Highcharts);
 
 import {
+  Highcharts,
   getModel,
   getChartOptions,
   determineTextColor,
   ChartTypes,
 } from '../../_js/chartUtils'
-
-import {merge} from 'lodash';
 
 let chart;
 

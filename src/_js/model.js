@@ -47,28 +47,28 @@ export class Model {
     return this._showLegend;
   }
   set showLegend(showLegend) {
-    this._showLegend = showLegend ? showLegend : true;
+    this._showLegend = showLegend == null ? true : showLegend;
   }
 
   get showTooltips() {
     return this._showTooltips ;
   }
   set showTooltips(showTooltips) {
-    this._showTooltips = showTooltips ? showTooltips : true;
+    this._showTooltips = showTooltips == null ? true : showTooltips;
   }
 
   get showDataLabels() {
     return this._showDataLabels;
   }
   set showDataLabels(showDataLabels) {
-    this._showDataLabels = showDataLabels ? showDataLabels : false;
+    this._showDataLabels = showDataLabels == null ? false : showDataLabels;
   }
 
   get showLinks() {
     return this._showLinks;
   }
   set showLinks(showLinks) {
-    this._showLinks = showLinks ? showLinks : false;
+    this._showLinks = showLinks == null ? false : showLinks;
   }
 
   get xAxisTitle() {
@@ -147,6 +147,13 @@ export class Model {
     } else if (maxSize) {
       this._maxSize = maxSize;
     }
+  }
+
+  get markerRadius() {
+    return this._markerRadius;
+  }
+  set markerRadius(markerRadius) {
+    this._markerRadius = markerRadius ? markerRadius : 4;
   }
 
   get allowDecimalAxisLabels() {

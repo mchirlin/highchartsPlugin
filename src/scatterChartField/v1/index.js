@@ -9,7 +9,8 @@ import {
 let chart;
 
 Appian.Component.onNewValue(function (newValues) {
-  let model = getModel(newValues, ChartTypes.AreaChart);
+
+  let model = getModel(newValues, ChartTypes.ScatterChart);
 
   Appian.Component.setValidations(model.validations);
 
@@ -22,12 +23,14 @@ Appian.Component.onNewValue(function (newValues) {
     model,
     {
       chart: {
-          type: 'area',
-          zoomType: 'x'
+        type: 'scatter',
+        zoomType: 'xy'
       },
       plotOptions: {
-        area: {
-          threshold: model.threshold,
+        scatter: {
+          marker: {
+            radius: model.markerRadius
+          }
         }
       },
       xAxis: {

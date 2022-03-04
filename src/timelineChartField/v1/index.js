@@ -1,16 +1,11 @@
-var Highcharts = require('highcharts');
 require('highcharts/modules/timeline')(Highcharts);
 
 import {
+  Highcharts,
   getModel,
   getChartOptions,
-  processSeries,
-  ChartTypes,
-  TEXT_COLOR_DARK,
-  TEXT_WEIGHT_SEMI_BOLD
+  ChartTypes
 } from '../../_js/chartUtils'
-
-import {merge} from 'lodash';
 
 let chart;
 

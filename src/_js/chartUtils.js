@@ -1,19 +1,22 @@
+export var Highcharts = require('highcharts');
+
 import { merge, zip, zipWith, isFunction, escape } from 'lodash';
 
 import { Model } from './model';
 
 export const ChartTypes = {
-  BarChart: 'BarChart',
-  PieChart: 'PieChart',
-  ColumnChart: 'ColumnChart',
   AreaChart: 'AreaChart',
-  SankeyDiagram: 'SankeyDiagram',
-  PackedBubble: 'PackedBubble',
-  TimelineChart: 'TimelineChart',
-  WordCloud: 'WordCloud',
-  Spiderweb: 'Spiderweb',
+  BarChart: 'BarChart',
+  ColumnChart: 'ColumnChart',
   Heatmap: 'Heatmap',
   OrganizationChart: 'OrganizationChart',
+  PackedBubble: 'PackedBubble',
+  PieChart: 'PieChart',
+  SankeyDiagram: 'SankeyDiagram',
+  ScatterChart: 'ScatterChart',
+  Spiderweb: 'Spiderweb',
+  TimelineChart: 'TimelineChart',
+  WordCloud: 'WordCloud'
 };
 
 const __COLORS_VAL = 'Invalid value for "colorScheme". "colorScheme" must be null, a list of colors, or one of the following values: "CLASSIC" (default), "MIDNIGHT", "OCEAN", "MOSS", "BERRY", "PARACHUTE", "RAINFOREST", or "SUNSET".';
@@ -90,6 +93,7 @@ export function getModel(newValues, type) {
   model.yAxisStyle = newValues.yAxisStyle;
   model.yAxisMin = newValues.yAxisMin;
   model.yAxisMax = newValues.yAxisMax;
+  model.markerRadius = newValues.markerRadius;
   model.minSize = newValues.minSize;
   model.maxSize = newValues.maxSize;
   model.allowDecimalAxisLabels = newValues.allowDecimalAxisLabels;
@@ -151,6 +155,15 @@ export function getChartOptions(
   const tooltipColor = usePatternFill ? TEXT_COLOR_DARK : '{series.color}';
   // chartContext = context;
 
+  Highcharts.dateFormats = {
+      '-m': function (timestamp) {
+          return (new Date(timestamp)).getUTCMonth() + 1;
+      },
+      '-e': function (timestamp) {
+          return (new Date(timestamp)).getUTCDate();
+      }
+  };
+
   return merge(
     {
       title: {
@@ -162,10 +175,10 @@ export function getChartOptions(
         title: {
           text: escape(model.xAxisTitle),
           style: {
-            color: inDarkBackground ? TEXT_COLOR_LIGHT : TEXT_COLOR_DARK,
             fontWeight: TEXT_WEIGHT_SEMI_BOLD
           }
         },
+        categories: model.categories,
         allowDecimals: model.allowDecimalAxisLabels,
         gridLineColor: inDarkBackground
           ? 'rgba(136, 136, 136, 0.5)'
@@ -183,38 +196,39 @@ export function getChartOptions(
               : 0,
           style: {
             fontSize: FONT_SIZE,
+            textOverflow: 'ellipsis',
             color: inDarkBackground ? TEXT_COLOR_LIGHT : TEXT_COLOR_DARK
           }
-        }
+        },
+        format: model.xAxisFormat,
+        type: model.xAxisType
       },
       yAxis: {
         visible: model.yAxisStyle !== 'NONE',
-      //   maxPadding: model.get('yAxisStyle') === 'MINIMAL' ? 0 : undefined,
-      //   tickPositioner:
-      //     model.get('yAxisStyle') === 'MINIMAL' ||
-      //     model.get('yAxisStyle') === 'NONE'
-      //       ? function () {
-      //           const defaultTicks = this.tickPositions;
-      //           const formattedMin = model.get('allowDecimalAxisLabels')
-      //             ? model.get('yAxisMin')
-      //             : Math.floor(model.get('yAxisMin'));
-      //           const min = formattedMin || defaultTicks[0];
-      //           const formattedMax = model.get('allowDecimalAxisLabels')
-      //             ? model.get('yAxisMax')
-      //             : Math.ceil(model.get('yAxisMax'));
-      //           const max =
-      //             formattedMax || defaultTicks[defaultTicks.length - 1];
-      //           return [min, max];
-      //         }
-      //       : undefined,
-      //   title: {
-      //     text: escape(model.get('yAxisTitle')),
-      //     style: {
-      //       color: inDarkBackground ? TEXT_COLOR_LIGHT : TEXT_COLOR_DARK,
-      //       fontWeight: TEXT_WEIGHT_SEMI_BOLD
-      //     }
-      //   },
-      //   allowDecimals: model.get('allowDecimalAxisLabels'),
+        maxPadding: model.yAxisStyle === 'MINIMAL' ? 0 : undefined,
+        tickPositioner:
+          model.yAxisStyle === 'MINIMAL' || model.yAxisStyle === 'NONE' ?
+          function () {
+            const defaultTicks = this.tickPositions;
+            const formattedMin = model.allowDecimalAxisLabels
+              ? model.yAxisMin
+              : Math.floor(model.yAxisMin);
+            const min = formattedMin || defaultTicks[0];
+            const formattedMax = model.allowDecimalAxisLabels
+              ? model.yAxisMax
+              : Math.ceil(model.yAxisMax);
+            const max =
+              formattedMax || defaultTicks[defaultTicks.length - 1];
+            return [min, max];
+          }
+        : undefined,
+        title: {
+          text: escape(model.yAxisTitle),
+          style: {
+            fontWeight: TEXT_WEIGHT_SEMI_BOLD
+          }
+        },
+        allowDecimals: model.allowDecimalAxisLabels
       //   gridLineColor: inDarkBackground
       //     ? 'rgba(136, 136, 136, 0.5)'
       //     : 'rgba(200, 200, 200, 0.5)',
@@ -458,7 +472,7 @@ export function getXAxisRotation(
   if (scrollsHorizontally || labelExceedsHorizontalSpace) {
     return {rotation: numDegreesXAxis, formatter: null};
   }
-  return {rotation: 0, formatter: null};
+  return {rotation: 0};
 }
 
 function getLongestSeriesData(series) {

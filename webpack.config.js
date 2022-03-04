@@ -6,14 +6,15 @@ var PACKAGE = require('./package.json');
 var version = PACKAGE.version;
 
 const plugins = [
-  {name: "wordCloudField", version: "v1"},
-  {name: "packedBubbleField", version: "v1"},
-  {name: "sankeyDiagramField", version: "v1"},
-  {name: "areaChartField", version: "v1"},
-  {name: "timelineChartField", version: "v1"},
-  {name: "spiderwebField", version: "v1"},
+  // {name: "areaChartField", version: "v1"},
   {name: "heatmapField", version: "v1"},
   {name: "organizationChartField", version: "v1"},
+  {name: "packedBubbleField", version: "v1"},
+  {name: "sankeyDiagramField", version: "v1"},
+  {name: "scatterChartField", version: "v1"},
+  {name: "spiderwebField", version: "v1"},
+  {name: "timelineChartField", version: "v1"},
+  {name: "wordCloudField", version: "v1"},
 ];
 
 let copyPatterns = [
@@ -51,7 +52,7 @@ module.exports = {
     }),
     new ZipPlugin({
       path: '../zip',
-      filename: 'highcharts-' + version + '.zip',
+      filename: 'adhoc-reporting-charts-' + version + '.zip',
     })
   ]
 };

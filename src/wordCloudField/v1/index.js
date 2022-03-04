@@ -1,13 +1,11 @@
-var Highcharts = require('highcharts');
 require('highcharts/modules/wordcloud')(Highcharts);
 
 import {
+  Highcharts,
   getModel,
   getChartOptions,
   ChartTypes,
 } from '../../_js/chartUtils'
-
-import {merge} from 'lodash';
 
 let chart;
 
