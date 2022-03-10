@@ -26,12 +26,6 @@ Appian.Component.onNewValue(function (newValues) {
           minSize: model.minSize,
           maxSize: model.maxSize,
           dataLabels: {
-            enabled: model.showDataLabels,
-            style: {
-              color: 'black',
-              textOutline: 'none',
-              fontWeight: 'normal'
-            },
             format: '{point.name}'
           },
           layoutAlgorithm: {

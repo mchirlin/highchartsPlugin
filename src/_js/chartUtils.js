@@ -4,17 +4,20 @@ import { merge, zip, zipWith, isFunction, escape } from 'lodash';
 
 import { Model } from './model';
 
+import "../_css/styles.css"
+
 export const ChartTypes = {
   AreaChart: 'AreaChart',
   BarChart: 'BarChart',
   ColumnChart: 'ColumnChart',
-  Heatmap: 'Heatmap',
+  HeatMap: 'HeatMap',
   OrganizationChart: 'OrganizationChart',
   PackedBubble: 'PackedBubble',
   PieChart: 'PieChart',
   SankeyDiagram: 'SankeyDiagram',
   ScatterChart: 'ScatterChart',
   Spiderweb: 'Spiderweb',
+  TileMap: 'TileMap',
   TimelineChart: 'TimelineChart',
   WordCloud: 'WordCloud'
 };
@@ -108,11 +111,12 @@ export function getModel(newValues, type) {
     model.height = 16;
   }
 
-  if (model.height === 'auto') {
-    document.getElementById('container').style.height = '400px';
-  } else if (model.height !== 'auto') {
-    document.getElementById('container').style.height = parseInt(model.height) - 16 + "px";
-  }
+  // Force width of report
+  // if (model.type == ChartTypes.TileMap) {
+  //   document.getElementById('container').style.width = (model.heightPixels * 1.25)  + 'px';
+  // }
+
+  document.getElementById('container').style.height = model.heightPixels + 'px';
 
   return model;
 }
@@ -131,12 +135,14 @@ export function getChartOptions(
   ...chartSpecificOptions
 ) {
   const accentColor = Appian.getAccentColor();
-  const isBarChart = model.type === ChartTypes.BarChart;
-  const isPieChart = model.type === ChartTypes.PieChart;
-  const isColumnChart = model.type === ChartTypes.ColumnChart;
   const isAreaChart = model.type === ChartTypes.AreaChart;
-  const isTimelineChart = model.type === ChartTypes.TimelineChart;
+  const isBarChart = model.type === ChartTypes.BarChart;
+  const isColumnChart = model.type === ChartTypes.ColumnChart;
+  const isHeatMap = model.type === ChartTypes.HeatMap;
   const isOrgChart = model.type === ChartTypes.OrganizationChart;
+  const isPieChart = model.type === ChartTypes.PieChart;
+  const isTileMap = model.type === ChartTypes.TileMap;
+  const isTimelineChart = model.type === ChartTypes.TimelineChart;
   // const isAccentDark = !!accentColor && isHexColorDark(accentColor);
   // const inDarkAccentBackground = context.inAccentBackground && isAccentDark;
   // const inDarkBackground = inDarkAccentBackground || context.inDarkBackground;
@@ -156,12 +162,12 @@ export function getChartOptions(
   // chartContext = context;
 
   Highcharts.dateFormats = {
-      '-m': function (timestamp) {
-          return (new Date(timestamp)).getUTCMonth() + 1;
-      },
-      '-e': function (timestamp) {
-          return (new Date(timestamp)).getUTCDate();
-      }
+    '-m': function (timestamp) {
+        return (new Date(timestamp)).getUTCMonth() + 1;
+    },
+    '-e': function (timestamp) {
+        return (new Date(timestamp)).getUTCDate();
+    }
   };
 
   return merge(
@@ -256,6 +262,11 @@ export function getChartOptions(
       //     inDarkBackground
       //   )
       },
+      colorAxis: (isHeatMap || isTileMap) ? {
+        min: 0,
+        minColor: '#FFF',
+        maxColor: model.colors[1] ? model.colors[1] : model.colors[0]
+      } : undefined,
       tooltip: {
         // Use the default tooltip styling for Timeline Charts
         pointFormat: `<span style="color:${tooltipColor};">{series.name}: </span>` +
@@ -271,6 +282,10 @@ export function getChartOptions(
       },
       legend: {
         // rtl: isRTLLanguage,
+        align: (isHeatMap || isTileMap) ? 'right' : 'center',
+        layout: (isHeatMap || isTileMap) ? 'vertical' : 'horizontal',
+        verticalAlign: (isHeatMap || isTileMap) ? 'top' : 'bottom',
+        y: (isHeatMap || isTileMap) ? 25 : 0,
         itemHoverStyle: {
           color: inDarkBackground ? '#fff' : '#000'
         },
@@ -284,17 +299,29 @@ export function getChartOptions(
         },
         enabled: model.showLegend,
         padding: model.height === 'MICRO' || isPieChart ? 2 : 5, // default is 8
-        symbolHeight: useLargerLegendItems ? 13 : 10 // defaults to font size, needed to prevent legend circle from being cut off
+        symbolHeight: (isHeatMap || isTileMap) ? 280 : useLargerLegendItems ? 13 : 10 // defaults to font size, needed to prevent legend circle from being cut off
       },
       plotOptions: {
-        series: model.showLinks ? {
-          cursor: 'pointer',
-          events: {
-            click: function (event) {
-              Appian.Component.saveValue('link', event.point.options);
+        series: merge(
+          {
+            dataLabels: {
+              enabled: model.showDataLabels,
+              style: {
+                textShadow: 'none',
+                cursor: 'default',
+                textOutline: 'none'
+              }
             }
-          }
-        } : {},
+          },
+          model.showLinks ? {
+            cursor: 'pointer',
+            events: {
+              click: function (event) {
+                Appian.Component.saveValue('link', event.point.options);
+              }
+            }
+          } : {}
+        ),
         // bar: {
         //   borderWidth: 1,
         //   dataLabels: {
@@ -353,13 +380,7 @@ export function getChartOptions(
         line: {
           turboThreshold: 0,
           dataLabels: {
-            enabled: model.showDataLabels,
-            style: {
-              textShadow: 'none',
-              cursor: 'default',
-              color: inDarkBackground ? TEXT_COLOR_LIGHT : TEXT_COLOR_DARK,
-              textOutline: 'none'
-            }
+            color: inDarkBackground ? TEXT_COLOR_LIGHT : TEXT_COLOR_DARK
           }
         },
         // area: {

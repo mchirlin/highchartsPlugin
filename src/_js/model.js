@@ -13,6 +13,16 @@ export class Model {
   }
   set height(height) {
     this._height = height;
+
+    if (this._height === 'auto') {
+      this._heightPixels = 400;
+    } else if (this._height !== 'auto') {
+      this._heightPixels = parseInt(this._height) - 16;
+    }
+  }
+
+  get heightPixels() {
+    return this._heightPixels;
   }
 
   get categories() {

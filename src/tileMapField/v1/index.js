@@ -1,4 +1,5 @@
 require('highcharts/modules/heatmap')(Highcharts);
+require('highcharts/modules/tilemap')(Highcharts);
 
 import {
   Highcharts,
@@ -11,7 +12,7 @@ let chart;
 
 Appian.Component.onNewValue(function (newValues) {
 
-  let model = getModel(newValues, ChartTypes.HeatMap);
+  let model = getModel(newValues, ChartTypes.TileMap);
 
   Appian.Component.setValidations(model.validations);
 
@@ -19,7 +20,7 @@ Appian.Component.onNewValue(function (newValues) {
     model,
     {
       chart: {
-        type: 'heatmap'
+        type: 'tilemap',
       },
       xAxis: {
         categories: model.xCategories

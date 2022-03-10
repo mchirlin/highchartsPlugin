@@ -7,12 +7,13 @@ var version = PACKAGE.version;
 
 const plugins = [
   // {name: "areaChartField", version: "v1"},
-  {name: "heatmapField", version: "v1"},
+  {name: "heatMapField", version: "v1"},
   {name: "organizationChartField", version: "v1"},
   {name: "packedBubbleField", version: "v1"},
   {name: "sankeyDiagramField", version: "v1"},
   {name: "scatterChartField", version: "v1"},
   {name: "spiderwebField", version: "v1"},
+  {name: "tileMapField", version: "v1"},
   {name: "timelineChartField", version: "v1"},
   {name: "wordCloudField", version: "v1"},
 ];

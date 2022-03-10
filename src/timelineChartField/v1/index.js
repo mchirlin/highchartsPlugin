@@ -47,7 +47,6 @@ Appian.Component.onNewValue(function (newValues) {
       },
       series: [{
         dataLabels: {
-          enabled: model.showDataLabels,
           allowOverlap: false,
           format: model.dataLabelFormat,
           width: 100,

@@ -14,11 +14,6 @@ Appian.Component.onNewValue(function (newValues) {
 
   Appian.Component.setValidations(model.validations);
 
-  const {rotation} = getXAxisRotation(
-    model,
-    -45
-  );
-
   let chartOptions = getChartOptions(
     model,
     {
@@ -31,11 +26,6 @@ Appian.Component.onNewValue(function (newValues) {
           marker: {
             radius: model.markerRadius
           }
-        }
-      },
-      xAxis: {
-        labels: {
-          rotation
         }
       }
     }
